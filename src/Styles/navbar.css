@@ -1,0 +1,38 @@
+.active {
+    background-color: #465B71;
+}
+
+ul.header li {
+    display: list-item;
+    list-style-type: none;
+    width: 100%;
+    margin: 0;
+}
+
+.routerHeader{
+    width: 100%;
+}
+
+ul.header {
+    background-color: #34495e;
+    width: 100%;
+    padding: 0;
+}
+ul.header li a {
+    color: #FFF;
+    width: 100%;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 20px;
+    display: inline-block;
+}
+
+.dashboard{
+    height: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    background: #2c3e50;
+}

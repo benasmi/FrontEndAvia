@@ -1,0 +1,98 @@
+.popup {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: rgba(0,0,0, 0.5);
+}
+.popup\_inner {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 20%;
+    bottom: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    border-radius: 20px;
+    background: white;
+}
+
+.submitDiv{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapperDiv{
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.formDiv{
+    margin: 10px;
+    width: 50%;
+    height: 90%;
+    border-radius: 5px;
+}
+
+.resultsDiv{
+    margin: 10px;
+    width: 50%;
+    height: 90%;
+    border: 1px solid #2c3e50;
+    border-radius: 5px;
+}
+
+.centerHeader{
+    display: flex;
+    width: 100%;
+    height: 100px;
+    justify-content: center;
+}
+
+.columnDiv input[type="text"] {
+    margin: 10px;
+    height: 30px;
+    font-size: 18px;
+    padding: 10px;
+    width: 80%;
+}
+
+.columnDiv{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.radioDiv{
+    width: 100%;
+    margin: 10px;
+    display: flex;
+    font-size: 18px;
+    justify-content: space-evenly;
+}
+
+.submitButton{
+    width: 30%;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: #FFFFFF;
+    height: 30px;
+    border-radius: 5px;
+    background: dodgerblue;
+    margin-top: 32px;
+}
+
+
