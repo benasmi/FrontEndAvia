@@ -4,7 +4,7 @@ import App from './App';
 import './Styles/styles.css'
 import UsersPage from "./Pages/UsersPage";
 import CurrencyPage from "./Pages/CurrencyPage";
-import Navbar from "./Components/Navbar";
+import NavbarComponent from "./Components/NavbarComponent";
 
 import {HashRouter, Route, Link, BrowserRouter as Router, NavLink} from 'react-router-dom'
 
@@ -12,7 +12,7 @@ import {HashRouter, Route, Link, BrowserRouter as Router, NavLink} from 'react-r
 const routing = (
     <HashRouter>
         <div className="routerDiv">
-            <Navbar/>
+            <NavbarComponent/>
         </div>
 
         <div className="contentDiv">

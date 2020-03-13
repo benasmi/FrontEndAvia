@@ -2,11 +2,10 @@ import React, {useEffect, useState} from 'react'
 import '../Styles/userspage.css'
 import { ReactComponent as Logo } from '../Images/add.svg';
 import axios from "axios"
-import Table from '../Components/Table'
+import TableComponent from '../Components/TableComponent'
 import AddUserPopUp from "../Components/AddUserPopUp";
 import { CircleToBlockLoading } from 'react-loadingg';
-import LoaderPopup from "../Components/LoaderPopup";
-
+import ReactSnackBar from "react-js-snackbar";
 
 
 export default function UserPage() {
@@ -17,6 +16,11 @@ export default function UserPage() {
     const [showAddPopUp, setShowAddPopUp] = useState(false)
     const [showLoader, setShowLoader] = useState(false)
 
+    const [isQueryActive, setQueryActive] = useState(false)
+
+    const [showSnackBar, setShowSnackbar] = useState(false)
+    const [isSnackBarShowing, setSnackBarShowing] = useState(false)
+
     const headers = [
         {key:"", editable:true},
         {key:"name", editable:true},
@@ -26,12 +30,58 @@ export default function UserPage() {
         {key:"email", editable:true}
     ];
 
+    const show = () => {
+        if (isSnackBarShowing) return;
+
+        setSnackBarShowing(true)
+        setShowSnackbar(true)
+        setTimeout(() => {
+            setSnackBarShowing(false)
+            setShowSnackbar(false)
+        }, 2000);
+    };
+
     if(!fetchedData){
         console.log("Pradedamas siuntimas...")
         setFetchData(true)
         fetchUsers()
     }
 
+
+
+    return(
+            <div className="content">
+                <div style={{ width: "100%"}}>
+                    <h1 >Users</h1>
+                    <ReactSnackBar style={{}} Icon={<span>✔</span>} Show={showSnackBar}>
+                        Succesfully updated!
+                    </ReactSnackBar>
+                </div>
+                <div className="actionsPanel">
+                    <button className="updateButton" onClick={updateUsers}>Update</button>
+                    <button className="removeButton" onClick={removeUsers}>Remove selected</button>
+                    <button className="updateButton" onClick={addUser}>
+                        <Logo style={{width:"48px", height:"48px"}}/>
+                    </button>
+                </div>
+                {showAddPopUp ? <AddUserPopUp addAllUsers={addAllUsers} closePopup={togglePopUp}/> : null}
+                <div className="tableDiv">
+
+                    {isQueryActive ?  <CircleToBlockLoading size="large" style={{}}/> : null}
+
+                    {(showLoader) ?
+                        <CircleToBlockLoading size="large" style={{}}/>
+                    : <TableComponent
+                        header={headers}
+                        data={data}
+                        setData={setData}
+                        setUpdatedRows={setUpdatedRows}
+                        setSelectedRows={setSelectedRows}
+                    />}
+                </div>
+
+            </div>
+    );
 
     function addUser() {
         setShowAddPopUp(true)
@@ -73,7 +123,8 @@ export default function UserPage() {
         axios.get('https://intense-plateau-30917.herokuapp.com/users/all', {
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*'
             }
         }).then(function (response) {
             let temp = []
@@ -97,6 +148,7 @@ export default function UserPage() {
     }
 
     function updateUsers() {
+        setQueryActive(true)
         axios.post('https://intense-plateau-30917.herokuapp.com/users/update', updatedRows.map((item)=>{return item.data}),{
             headers: {
                 'Content-Type': 'application/json',
@@ -109,6 +161,8 @@ export default function UserPage() {
             Object.keys(response.data).map((user)=>{
                 temp.push(response.data[user])
             });
+            setQueryActive(false)
+            show();
             console.log(data)
         }).catch(function (error) {
             if (error.response) {
@@ -159,37 +213,5 @@ export default function UserPage() {
     function togglePopUp() {
         setShowAddPopUp(!showAddPopUp)
     }
-
-    return(
-            <div className="content">
-                <h1 >Users</h1>
-                <div className="actionsPanel">
-                    <button className="updateButton" onClick={updateUsers}>Update</button>
-                    <button className="removeButton" onClick={removeUsers}>Remove selected</button>
-                    <button className="updateButton" onClick={addUser}>
-                        <Logo style={{width:"48px", height:"48px"}}/>
-                    </button>
-                </div>
-                {showAddPopUp ? <AddUserPopUp addAllUsers={addAllUsers} closePopup={togglePopUp}/> : null}
-                <div className="tableDiv">
-
-                    {/*<LoaderPopup/>*/}
-
-                    {showLoader ?
-                        <CircleToBlockLoading size="large" style={{}}/>
-                    : <Table
-                        header={headers}
-                        data={data}
-                        setData={setData}
-                        setUpdatedRows={setUpdatedRows}
-                        setSelectedRows={setSelectedRows}
-                    />}
-                </div>
-
-            </div>
-    )
-    /*
-
-     */
 }
 

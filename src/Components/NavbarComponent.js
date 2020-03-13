@@ -1,10 +1,12 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
 import '../Styles/navbar.css'
-export default function Navbar() {
+import {Nav, Navbar} from 'react-bootstrap'
+
+export default function NavbarComponent() {
     return(
 
-        <div className="routerHeader">
+<div className="routerHeader">
             <div className="dashboard">
                 <h3 style={{color:"white"}}>Dashboard</h3>
             </div>
@@ -14,6 +16,10 @@ export default function Navbar() {
                 <li><NavLink to="/currencies">Currencies</NavLink></li>
             </ul>
         </div>
+ 
+
     )
 
 }
+
+

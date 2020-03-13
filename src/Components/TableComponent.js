@@ -1,11 +1,11 @@
 import React, {useState,useEffect,useReducer} from "react";
 import '../Styles/userspage.css'
-
+import Table from "react-bootstrap/table"
 
 let selectedRows = [];
 let data = []
 
-export default function Table(props) {
+export default function TableComponent(props) {
     const [header, setHeader] = useState(props.header);
     const [updatedRows, setUpdatedRows] = useState([]);
     data = props.data;
@@ -49,7 +49,6 @@ export default function Table(props) {
             return <th key={index}>{key.key.toUpperCase()}</th>
         })
     };
-
     const giveTableRow = (row,index) => {
         return header.map((key, column) => {
             if(key.key==""){
@@ -85,14 +84,21 @@ export default function Table(props) {
     };
 
     return(
-        <div style={{transition: "transition: opacity 10s ease-in-out;",width: "100%"}}>
-            <table id='students'>
-                <thead>{renderTableHeader()}</thead>
-                <tbody>
-                    {renderTableData()}
-                </tbody>
+        <div style={{width: "100%"}}>
 
-            </table>
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        {renderTableHeader()}
+
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    </tbody>
+                </Table>
+
         </div>
     )
 }
