@@ -1,0 +1,26 @@
+#table thead{
+    background: #343A40;
+    color: white;
+    text-align: center;
+}
+
+#table th{
+    position: sticky;
+    top: 0;
+    background: #343A40;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
+
+#table tr {
+    text-align: center;
+    width: 100%;
+}
+
+#table input{
+    width: 80%;
+    background: white;
+    text-align: center;
+    border: none;
+}
+
+#table tr:hover:not(:first-child){background-color: #ddd}

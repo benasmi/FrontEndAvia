@@ -1,6 +1,5 @@
 import React from "react";
 import {ReactComponent as Close} from "../Images/close.svg";
-import '../Styles/usercomponent.css'
 
 
 export default function UserComponent(props) {

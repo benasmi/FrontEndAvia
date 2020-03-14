@@ -1,9 +1,10 @@
 import React, {useState,useEffect,useReducer} from "react";
-import '../Styles/userspage.css'
 import Table from "react-bootstrap/table"
+import '../Styles/table.css'
+
 
 let selectedRows = [];
-let data = []
+let data = [];
 
 export default function TableComponent(props) {
     const [header, setHeader] = useState(props.header);
@@ -11,7 +12,7 @@ export default function TableComponent(props) {
     data = props.data;
     function existRow(data, rowNumb){
         for(let i = 0; i<data.length; i++){
-            if(data[i].row == rowNumb) return true
+            if(data[i].row === rowNumb) return true
         }
         return false
     }
@@ -38,7 +39,8 @@ export default function TableComponent(props) {
             setUpdatedRows(updatedRows)
         }
 
-        props.setUpdatedRows(updatedRows)
+        console.log("Siuo metu pasirinkti: " + selectedRows);
+        props.setUpdatedRows(updatedRows);
         props.setSelectedRows(selectedRows)
     }
 
@@ -51,7 +53,7 @@ export default function TableComponent(props) {
     };
     const giveTableRow = (row,index) => {
         return header.map((key, column) => {
-            if(key.key==""){
+            if(key.key===""){
                 return <td> <input
                     data-column={column}
                     data-row={index}
@@ -74,6 +76,8 @@ export default function TableComponent(props) {
     };
 
     const renderTableData = () => {
+        console.log("Po naikinimo");
+        console.log(props.data)
         return props.data.map((row,index) => {
             return(
                 <tr key={index}>
@@ -84,21 +88,18 @@ export default function TableComponent(props) {
     };
 
     return(
-        <div style={{width: "100%"}}>
-
-                <Table striped bordered hover>
+        <div style={{overflowY:"scroll", maxHeight: "70%",background: "white",width: "80%"}}>
+                <Table id="table" striped bordered hover responsive="lg" size="lg">
                     <thead>
                     <tr>
                         {renderTableHeader()}
-
                     </tr>
                     </thead>
 
                     <tbody>
-
+                        {renderTableData()}
                     </tbody>
                 </Table>
-
         </div>
     )
 }

@@ -27,11 +27,11 @@ export default function UserPage() {
 
     const headers = [
         {key:"", editable:true},
-        {key:"name", editable:true},
-        {key:"surname", editable:true},
-        {key:"gender", editable:false},
-        {key:"birthday", editable:false},
-        {key:"email", editable:false}
+        {key:"cityName", editable:false},
+        {key:"averageTemperature", editable:true},
+        {key:"fk_timeZone", editable:false},
+        {key:"fk_currency", editable:false},
+        {key:"fk_countryCode", editable:false}
     ];
 
     if(!fetchedData){
@@ -45,28 +45,28 @@ export default function UserPage() {
             {showLoader ?
                 <CustomLoader/> :
                 <div className="content">
-                    <h1 className="mt-5">Users</h1>
-                        <TableComponent
-                            header={headers}
-                            data={data}
-                            setData={setData}
-                            setUpdatedRows={setUpdatedRows}
-                            setSelectedRows={setSelectedRows}
-                        />
-                        <div className="w-75 d-flex justify-content-end ">
-                            <ButtonToolbar className="mt-5">
-                                <Button className="ml-0" variant="success" onClick={()=>{
-                                    setShowAddPopUp(true)}}>Add user</Button>
+                    <h1 className="mt-5">Cities</h1>
+                    <TableComponent
+                        header={headers}
+                        data={data}
+                        setData={setData}
+                        setUpdatedRows={setUpdatedRows}
+                        setSelectedRows={setSelectedRows}
+                    />
+                    <div className="w-75 d-flex justify-content-end ">
+                        <ButtonToolbar className="mt-5">
+                            <Button className="ml-0" variant="success" onClick={()=>{
+                                setShowAddPopUp(true)}}>Add user</Button>
 
-                                <Button className="ml-4" variant="primary" onClick={()=>{
-                                    updateUsers()
-                                }}>Update</Button>
+                            <Button className="ml-4" variant="primary" onClick={()=>{
+                                updateUsers()
+                            }}>Update</Button>
 
-                                <Button className="ml-2" variant="danger" onClick={()=>{
-                                    removeUsers()
-                                }}>Remove selected</Button>
-                            </ButtonToolbar>
-                        </div>
+                            <Button className="ml-2" variant="danger" onClick={()=>{
+                                removeUsers()
+                            }}>Remove selected</Button>
+                        </ButtonToolbar>
+                    </div>
 
 
                     <AddUserModal
@@ -96,14 +96,14 @@ export default function UserPage() {
     }
 
     function snackbarClose(){
-            setShowStatus(false)
+        setShowStatus(false)
     }
 
     function addAllUsers(users) {
         insertUsers(users)
     }
 
-    
+
     function insertUsers(users){
         setQueryActive(true)
         axios.post('https://intense-plateau-30917.herokuapp.com/users/insert', users,{
@@ -138,7 +138,7 @@ export default function UserPage() {
 
     function fetchUsers(){
         setShowLoader(true)
-        axios.get('https://intense-plateau-30917.herokuapp.com/users/all', {
+        axios.get('https://intense-plateau-30917.herokuapp.com/city/all', {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -238,4 +238,3 @@ export default function UserPage() {
     }
 
 }
-
