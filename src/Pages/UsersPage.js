@@ -26,12 +26,12 @@ export default function UserPage() {
 
 
     const headers = [
-        {key:"", editable:true},
-        {key:"name", editable:true},
-        {key:"surname", editable:true},
-        {key:"gender", editable:false},
-        {key:"birthday", editable:false},
-        {key:"email", editable:false}
+        {key:"", editable:true, selectable: false},
+        {key:"name", editable:true, selectable: false},
+        {key:"surname", editable:true, selectable: false},
+        {key:"gender", editable:false, selectable: false},
+        {key:"birthday", editable:false, selectable: false},
+        {key:"email", editable:false, selectable: false}
     ];
 
     if(!fetchedData){

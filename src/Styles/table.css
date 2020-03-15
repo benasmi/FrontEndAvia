@@ -23,4 +23,11 @@
     border: none;
 }
 
+#table select{
+    width: 80%;
+    background: white;
+    text-align: center;
+    border: none;
+}
+
 #table tr:hover:not(:first-child){background-color: #ddd}

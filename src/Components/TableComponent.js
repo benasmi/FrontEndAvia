@@ -10,6 +10,7 @@ export default function TableComponent(props) {
     const [header, setHeader] = useState(props.header);
     const [updatedRows, setUpdatedRows] = useState([]);
     data = props.data;
+
     function existRow(data, rowNumb){
         for(let i = 0; i<data.length; i++){
             if(data[i].row === rowNumb) return true
@@ -39,7 +40,6 @@ export default function TableComponent(props) {
             setUpdatedRows(updatedRows)
         }
 
-        console.log("Siuo metu pasirinkti: " + selectedRows);
         props.setUpdatedRows(updatedRows);
         props.setSelectedRows(selectedRows)
     }
@@ -51,6 +51,7 @@ export default function TableComponent(props) {
             return <th key={index}>{key.key.toUpperCase()}</th>
         })
     };
+
     const giveTableRow = (row,index) => {
         return header.map((key, column) => {
             if(key.key===""){
@@ -68,6 +69,17 @@ export default function TableComponent(props) {
                         type="text"
                         defaultValue={row[key.key]}
                         onChange={handleChange}/></td>
+                }else if(key.selectable){
+                    console.log("Gavau selectorius:", key.selectableData)
+                    return <td><select
+                        data-column={column}
+                        data-row={index}
+                        defaultValue={row[key.key]}
+                        onChange={handleChange}>
+                        {key.selectableData.map((element)=>{
+                            return (<option value={element.value}>{element.displayValue}</option>)
+                        })}
+                    </select></td>
                 }else{
                     return <td>{row[key.key]}</td>
                 }
@@ -76,8 +88,6 @@ export default function TableComponent(props) {
     };
 
     const renderTableData = () => {
-        console.log("Po naikinimo");
-        console.log(props.data)
         return props.data.map((row,index) => {
             return(
                 <tr key={index}>
