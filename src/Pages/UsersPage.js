@@ -8,7 +8,7 @@ import AddUserComplex from "../Components/AddUserComplex";
 import CustomLoader from "../Components/CustomLoader";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-
+import UsersAPI from "../InterfaceAPI/UserAPI";
 
 export default function UserPage() {
     //Data hooks
@@ -45,6 +45,13 @@ export default function UserPage() {
 
     if(!fetchedData){
         setFetchData(true)
+        UsersAPI.getUsers().then(response=>{
+            console.log("Pavyko parpulinti")
+            console.log(response);
+        }).catch(error=>{
+            console.log(error);
+        });
+
         fetchUsers()
     }
 
