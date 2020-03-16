@@ -4,16 +4,21 @@ import axios from "axios"
 import TableComponent from '../Components/TableComponent'
 import {Button, ButtonToolbar} from "react-bootstrap"
 import AddUserModal from "../Components/AddUserModal";
+import AddUserComplex from "../Components/AddUserComplex";
 import CustomLoader from "../Components/CustomLoader";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 
+
 export default function UserPage() {
     //Data hooks
     const [data, setData] = useState([]);
+    const [countryData, setCountryData] = useState([]);
+    const [cardsProviderData, setCardsProviderData] = useState([]);
     const [fetchedData, setFetchData] = useState(false);
     const [updatedRows, setUpdatedRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
+
 
     //Popup hooks
     const [showAddPopUp, setShowAddPopUp] = useState(false);
@@ -24,6 +29,9 @@ export default function UserPage() {
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackBarConfig] = useState({message:"", isSuccessful: false});
 
+    //Forms manipulation
+    const [complexFormEnabled, setComplexFormEnabled] = useState(false);
+
 
     const headers = [
         {key:"", editable:true, selectable: false},
@@ -31,6 +39,7 @@ export default function UserPage() {
         {key:"surname", editable:true, selectable: false},
         {key:"gender", editable:false, selectable: false},
         {key:"birthday", editable:false, selectable: false},
+        {key:"fk_country", editable:false, selectable: false},
         {key:"email", editable:false, selectable: false}
     ];
 
@@ -39,13 +48,23 @@ export default function UserPage() {
         fetchUsers()
     }
 
+    function submitComplexUserForm(data){
+        insertUsersWithCards(data)
+    }
+
+
 
     return(
         <div className="content">
             {showLoader ?
                 <CustomLoader/> :
-                <div className="content">
-                    <h1 className="mt-5">Users</h1>
+                complexFormEnabled ? <AddUserComplex
+                    closeComplexForm={closeComplexForm}
+                    submitComplexUserForm={submitComplexUserForm}
+                    selectableData={{countries: countryData, cardsProviderData: cardsProviderData}}
+                    />
+                    : <div className="content">
+                        <h1 className="mt-5">Users(PN2)</h1>
                         <TableComponent
                             header={headers}
                             data={data}
@@ -56,7 +75,10 @@ export default function UserPage() {
                         <div className="w-75 d-flex justify-content-end ">
                             <ButtonToolbar className="mt-5">
                                 <Button className="ml-0" variant="success" onClick={()=>{
-                                    setShowAddPopUp(true)}}>Add user</Button>
+                                    setShowAddPopUp(true)}}>Add users</Button>
+
+                                <Button className="ml-4" variant="success" onClick={()=>{
+                                    setComplexFormEnabled(true)}}>Advanced</Button>
 
                                 <Button className="ml-4" variant="primary" onClick={()=>{
                                     updateUsers()
@@ -69,26 +91,123 @@ export default function UserPage() {
                         </div>
 
 
-                    <AddUserModal
-                        show={showAddPopUp}
-                        onHide={() => setShowAddPopUp(false)}
-                        addAllUsers={addAllUsers}
-                    />
-
-                    {isQueryActive ? <CustomLoader/> : null}
-
-                    <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={snackbarClose}>
-                        <Alert onClose={snackbarClose} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
-                            {snackbarConfig.message}
-                        </Alert>
-                    </Snackbar>
-
-                </div>
+                        <AddUserModal
+                            selectableData={{countries: countryData}}
+                            show={showAddPopUp}
+                            onHide={() => setShowAddPopUp(false)}
+                            addAllUsers={addAllUsers}
+                        />
 
 
+
+
+
+                    </div>
             }
+
+            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={snackbarClose}>
+                <Alert onClose={snackbarClose} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
+                    {snackbarConfig.message}
+                </Alert>
+            </Snackbar>
+
+            {isQueryActive ? <CustomLoader/> : null}
         </div>
     );
+
+    function insertUsersWithCards(cardsUserDAta){
+        setQueryActive(true)
+        axios.post('https://intense-plateau-30917.herokuapp.com/cards/insert', cardsUserDAta,{
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+        }).then(function (response) {
+            let temp = data.slice();
+            temp.push(cardsUserDAta.user);
+            setData(temp)
+            setQueryActive(false)
+            setComplexFormEnabled(false)
+            makeSnackbar("All users and credit cards were added successfully!", true)
+        }).catch(function (error) {
+            makeSnackbar("Something went wrong! Please try again later.", false)
+            setQueryActive(false)
+            if (error.response) {
+                console.log(error.response.headers);
+            }
+            else if (error.request) {
+                console.log(error.request);
+            }
+            else {
+                console.log(error.message);
+            }
+            console.log(error.config);
+        });
+    }
+
+
+    function fetchCountries(){
+        axios.get('https://intense-plateau-30917.herokuapp.com/country/all', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }).then(function (response) {
+            let temp = [];
+            Object.keys(response.data).map((currency)=>{
+                temp.push(response.data[currency])
+            });
+            setCountryData(temp);
+            fetchCardProvider()
+        }).catch(function (error) {
+            setShowLoader(false)
+            if (error.response) {
+                console.log(error.response.headers);
+            }
+            else if (error.request) {
+                console.log(error.request);
+            }
+            else {
+                console.log(error.message);
+            }
+            console.log(error.config);
+        });
+    }
+
+    function fetchCardProvider(){
+        axios.get('https://intense-plateau-30917.herokuapp.com/cardprovider/all', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }).then(function (response) {
+            let temp = [];
+            Object.keys(response.data).map((currency)=>{
+                temp.push(response.data[currency])
+            });
+            setCardsProviderData(temp);
+            setShowLoader(false)
+        }).catch(function (error) {
+            setShowLoader(false)
+            if (error.response) {
+                console.log(error.response.headers);
+            }
+            else if (error.request) {
+                console.log(error.request);
+            }
+            else {
+                console.log(error.message);
+            }
+            console.log(error.config);
+        });
+    }
+
+    function closeComplexForm(){
+        setComplexFormEnabled(false)
+    }
 
     function makeSnackbar(message, isSuccessful) {
         setSnackBarConfig({message: message, isSuccessful: isSuccessful})
@@ -150,7 +269,7 @@ export default function UserPage() {
                 temp.push(response.data[user])
             });
             setData(temp)
-            setShowLoader(false)
+            fetchCountries()
             setSelectedRows([])
         }).catch(function (error) {
             makeSnackbar("Something went wrong! Please try again later.", false)

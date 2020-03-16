@@ -13,7 +13,8 @@ import {HashRouter, Route, Link, BrowserRouter as Router, NavLink} from 'react-r
 const routing = (
     <div className="contentDiv">
         <HashRouter>
-            <NavbarComponent/>
+                <NavbarComponent/>
+
                 <Route path="/users" component={UsersPage} />
                 <Route path="/city" component={CityPage} />
         </HashRouter>

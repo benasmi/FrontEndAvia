@@ -8,20 +8,22 @@ let users = []
 
 export default function AddUserModal(props) {
 
-    const [name, setName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [date, setDate] = useState("")
-    const [gender, setGender] = useState("Select gender...")
-    const [users, setUsers] = useState([])
+    const [name, setName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [date, setDate] = useState("");
+    const [gender, setGender] = useState("Select gender...");
+    const [city, setCity] = useState("Select country...")
+    const [users, setUsers] = useState([]);
 
     function addUser(){
-        users.push({"name": name, "surname": lastName, "email": email, "birthday": date, "gender": gender, password: password})
+        users.push({"name": name, "surname": lastName, "email": email, "birthday": date, "gender": gender, "password": password, "fk_country": parseInt(city)})
         setName("")
         setLastName("")
         setEmail("")
         setGender("Select gender...")
+        setCity("Select country...")
         setPassword("")
         setDate("")
         setUsers(users)
@@ -87,6 +89,16 @@ export default function AddUserModal(props) {
                                         <option>Select gender</option>
                                         <option>Male</option>
                                         <option>Female</option>
+                                    </Form.Control>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="mt-4">
+                                    <Form.Control as="select" value={city} onChange={(e)=>setCity(e.target.value)}>
+                                        <option>Select country</option>
+                                        {props.selectableData.countries.map((item)=>{
+                                            return (<option value={item.numericCode}>{item.country}</option>)
+                                        })}
                                     </Form.Control>
                                 </Col>
                             </Row>

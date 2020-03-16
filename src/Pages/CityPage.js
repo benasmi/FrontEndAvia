@@ -53,7 +53,7 @@ export default function CityPage() {
             {showLoader ?
                 <CustomLoader/> :
                 <div className="content">
-                    <h1 className="mt-5">Cities</h1>
+                    <h1 className="mt-5">Cities(PP2)</h1>
                     <TableComponent
                         header={headers}
                         data={data}

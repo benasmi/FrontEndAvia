@@ -23,6 +23,11 @@
     border: none;
 }
 
+#table input[type='checkbox']{
+    width: 12px;
+    height: 12px;
+}
+
 #table select{
     width: 80%;
     background: white;
