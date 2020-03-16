@@ -8,7 +8,7 @@ import AddUserComplex from "../Components/AddUserComplex";
 import CustomLoader from "../Components/CustomLoader";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
-import UsersAPI from "../InterfaceAPI/UserAPI";
+import API from "../Networking/API";
 
 export default function UserPage() {
     //Data hooks
@@ -19,7 +19,6 @@ export default function UserPage() {
     const [updatedRows, setUpdatedRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
 
-
     //Popup hooks
     const [showAddPopUp, setShowAddPopUp] = useState(false);
 
@@ -27,16 +26,20 @@ export default function UserPage() {
     const [showLoader, setShowLoader] = useState(false);
     const [isQueryActive, setQueryActive] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({message:"", isSuccessful: false});
+    const [snackbarConfig, setSnackBarConfig] = useState({message: "", isSuccessful: false});
 
     //Forms manipulation
     const [complexFormEnabled, setComplexFormEnabled] = useState(false);
 
+    const MESSAGES = {
+        SUCCESS: "Your request to server went successfully!",
+        ERROR: "Something went wrong! Please try again later."
+    };
 
     const headers = [
         {key:"", editable:true, selectable: false},
         {key:"name", editable:true, selectable: false},
-        {key:"surname", editable:true, selectable: false},
+        {key:"surname", editable:false, selectable: false},
         {key:"gender", editable:false, selectable: false},
         {key:"birthday", editable:false, selectable: false},
         {key:"fk_country", editable:false, selectable: false},
@@ -45,13 +48,6 @@ export default function UserPage() {
 
     if(!fetchedData){
         setFetchData(true)
-        UsersAPI.getUsers().then(response=>{
-            console.log("Pavyko parpulinti")
-            console.log(response);
-        }).catch(error=>{
-            console.log(error);
-        });
-
         fetchUsers()
     }
 
@@ -59,14 +55,12 @@ export default function UserPage() {
         insertUsersWithCards(data)
     }
 
-
-
     return(
         <div className="content">
             {showLoader ?
                 <CustomLoader/> :
                 complexFormEnabled ? <AddUserComplex
-                    closeComplexForm={closeComplexForm}
+                    closeComplexForm={setComplexFormEnabled(false)}
                     submitComplexUserForm={submitComplexUserForm}
                     selectableData={{countries: countryData, cardsProviderData: cardsProviderData}}
                     />
@@ -105,15 +99,11 @@ export default function UserPage() {
                             addAllUsers={addAllUsers}
                         />
 
-
-
-
-
                     </div>
             }
 
-            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={snackbarClose}>
-                <Alert onClose={snackbarClose} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
+            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={setShowStatus(false)}>
+                <Alert onClose={setShowStatus(false)} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
                     {snackbarConfig.message}
                 </Alert>
             </Snackbar>
@@ -122,98 +112,80 @@ export default function UserPage() {
         </div>
     );
 
-    function insertUsersWithCards(cardsUserDAta){
+    function insertUsersWithCards(cardsUserData){
         setQueryActive(true)
-        axios.post('https://intense-plateau-30917.herokuapp.com/cards/insert', cardsUserDAta,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            let temp = data.slice();
-            temp.push(cardsUserDAta.user);
-            setData(temp)
-            setQueryActive(false)
+        API.CardsAPI.insertCardsWithUser(cardsUserData).then(response=>{
+            setData(oldArray=> [...oldArray, cardsUserData.user])
             setComplexFormEnabled(false)
-            makeSnackbar("All users and credit cards were added successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            setQueryActive(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
+            responseFeedback(true)
+        }).catch(error=>{
+            responseFeedback(false)
         });
     }
 
-
     function fetchCountries(){
-        axios.get('https://intense-plateau-30917.herokuapp.com/country/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = [];
-            Object.keys(response.data).map((currency)=>{
-                temp.push(response.data[currency])
-            });
-            setCountryData(temp);
-            fetchCardProvider()
-        }).catch(function (error) {
+        API.CountryAPI.getCountries().then(response=>{
+           setCountryData(response);
+           fetchCardProvider()
+        }).catch(error=>{
             setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
     }
 
     function fetchCardProvider(){
-        axios.get('https://intense-plateau-30917.herokuapp.com/cardprovider/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = [];
-            Object.keys(response.data).map((currency)=>{
-                temp.push(response.data[currency])
-            });
-            setCardsProviderData(temp);
+        API.CardsProviderAPI.getCardsProviders().then(response=>{
+           setCardsProviderData(response);
             setShowLoader(false)
-        }).catch(function (error) {
+        }).catch(error=>{
             setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
     }
 
-    function closeComplexForm(){
-        setComplexFormEnabled(false)
+    function insertUsers(users){
+        setQueryActive(true);
+        API.UsersAPI.insertUsers(users).then(response=>{
+            users.map((item) =>{setData(oldArray => [...oldArray, item])});
+            setSelectedRows([])
+            setShowAddPopUp(false)
+            responseFeedback(true)
+        }).catch(error=>{
+            responseFeedback(false)
+        });
+    }
+
+    function fetchUsers(){
+        setShowLoader(true)
+        API.UsersAPI.getUsers().then(response=>{
+            setData(response);
+            fetchCountries()
+        }).catch(()=>{
+            responseFeedback(false)
+        });
+    }
+
+    function updateUsers() {
+        setQueryActive(true)
+        API.UsersAPI.updateUsers(updatedRows.map((item)=>{return item.data})).then(response=>{
+            responseFeedback(true)
+        }).catch(error=>{
+            responseFeedback(false)
+        });
+    }
+
+    function removeUsers() {
+        setQueryActive(true)
+        const selected = selectedRows.map((item)=>{return item.data});
+        API.UsersAPI.removeUsers(selected).then(response=>{
+            selected.map((item)=>setData(data.filter((row)=>{return item.email !== row.email})));
+            responseFeedback(true);
+        }).catch(error=>{
+            responseFeedback(false)
+        });
+    }
+
+    function responseFeedback(success){
+        makeSnackbar(success ? MESSAGES.SUCCESS : MESSAGES.ERROR, success)
+        setQueryActive(false)
     }
 
     function makeSnackbar(message, isSuccessful) {
@@ -221,146 +193,8 @@ export default function UserPage() {
         setShowStatus(true)
     }
 
-    function snackbarClose(){
-            setShowStatus(false)
-    }
-
     function addAllUsers(users) {
         insertUsers(users)
-    }
-
-    
-    function insertUsers(users){
-        setQueryActive(true)
-        axios.post('https://intense-plateau-30917.herokuapp.com/users/insert', users,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            let temp = data.slice();
-            users.map((item)=>{temp.push(item)});
-            setData(temp)
-
-            setQueryActive(false)
-            setShowAddPopUp(false)
-            setSelectedRows([]);
-            makeSnackbar("All users added successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
-        });
-    }
-
-    function fetchUsers(){
-        setShowLoader(true)
-        axios.get('https://intense-plateau-30917.herokuapp.com/users/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = []
-            Object.keys(response.data).map((user)=>{
-                temp.push(response.data[user])
-            });
-            setData(temp)
-            fetchCountries()
-            setSelectedRows([])
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
-        });
-    }
-
-    function updateUsers() {
-        setQueryActive(true)
-        axios.post('https://intense-plateau-30917.herokuapp.com/users/update', updatedRows.map((item)=>{return item.data}),{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            let temp = []
-            Object.keys(response.data).map((user)=>{
-                temp.push(response.data[user])
-            });
-            setQueryActive(false)
-            setSelectedRows([]);
-            makeSnackbar("Horray! All users were updated successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
-        });
-    }
-
-    function removeUsers() {
-        setQueryActive(true)
-        var selected = selectedRows.map((item)=>{return item.data})
-        var temp = data.slice()
-        console.log("Pries naikinant")
-        console.log(temp);
-        console.log("Pasirinkti naikinti")
-        console.log(selected);
-
-        axios.post('https://intense-plateau-30917.herokuapp.com/users/delete', selected,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            selected.map((item)=>{
-                temp = temp.filter((row) => {return item.email !== row.email})});
-            setData([])
-            setData(temp);
-            setSelectedRows([]);
-            setQueryActive(false);
-            makeSnackbar("All users removed successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
-        });
-
     }
 
 }
