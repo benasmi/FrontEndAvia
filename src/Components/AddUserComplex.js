@@ -21,7 +21,6 @@ export default function AddUserComplex(props){
 
 
     function removeCreditCard(row){
-        console.log("Remove row", row);
         var vals = dataCards.slice()
         vals = vals.filter((item, idx)=>{return idx!==row})
         console.log(vals)
@@ -44,8 +43,8 @@ export default function AddUserComplex(props){
     }
 
     function addCreditCard(){
-        const cCards = dataCards.slice()
-        cCards.push({cardNumber:"",csv: "", expYear: "", expMonth: "", fk_cardProvider: 0})
+        const cCards = dataCards.slice();
+        cCards.push({cardNumber:"",csv: "", expYear: "", expMonth: "", fk_cardProvider: 0});
         setDataCards(cCards);
     }
 

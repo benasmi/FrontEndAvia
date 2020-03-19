@@ -7,11 +7,11 @@ import AddCityModal from "../Components/AddCityModal";
 import CustomLoader from "../Components/CustomLoader";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
+import API from "../Networking/API";
 
 export default function CityPage() {
     //Data hooks
     const [data, setData] = useState([]);
-    const [fetchedData, setFetchData] = useState(false);
     const [updatedRows, setUpdatedRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [headers, setHeaders] = useState([])
@@ -29,16 +29,18 @@ export default function CityPage() {
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackBarConfig] = useState({message:"", isSuccessful: false});
 
-
-
-    if(!fetchedData){
-        setFetchData(true)
-        fetchUsers()
-    }
-
+    const MESSAGES = {
+        SUCCESS: "Your request to server went successfully!",
+        ERROR: "Something went wrong! Please try again later."
+    };
 
     useEffect(()=>{
-        let temp = [{key:"", editable:true, selectable: false},
+        fetchCities()
+    },[]);
+
+    useEffect(()=>{
+        let temp = [
+            {key:"checkbox", editable:true, selectable: false},
             {key:"cityName", editable:false, selectable: false},
             {key:"averageTemperature", editable:true, selectable: false},
             {key:"fk_timeZone", editable:false, selectable: true, selectableData: createSelectorValues(timeZoneData, "timeZone", "timeZone")},
@@ -59,6 +61,7 @@ export default function CityPage() {
                         data={data}
                         setData={setData}
                         setUpdatedRows={setUpdatedRows}
+                        selectedRows={selectedRows}
                         setSelectedRows={setSelectedRows}
                     />
                     <div className="w-75 d-flex justify-content-end ">
@@ -85,8 +88,8 @@ export default function CityPage() {
 
                     {isQueryActive ? <CustomLoader/> : null}
 
-                    <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={snackbarClose}>
-                        <Alert onClose={snackbarClose} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
+                    <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={e=>{setShowStatus(false)}}>
+                        <Alert onClose={e=>{setShowStatus(false)}} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
                             {snackbarConfig.message}
                         </Alert>
                     </Snackbar>
@@ -103,12 +106,13 @@ export default function CityPage() {
         setShowStatus(true)
     }
 
-    function snackbarClose(){
-        setShowStatus(false)
+    function responseFeedback(success){
+        makeSnackbar(success ? MESSAGES.SUCCESS : MESSAGES.ERROR, success)
+        setQueryActive(false)
     }
 
     function addAllUsers(users) {
-        insertUsers(users)
+        insertCity(users)
     }
 
     function createSelectorValues(data, value, displayValue){
@@ -120,225 +124,78 @@ export default function CityPage() {
     }
 
     function fetchCurrencies(){
-        axios.get('https://intense-plateau-30917.herokuapp.com/currency/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = [];
-            Object.keys(response.data).map((currency)=>{
-                temp.push(response.data[currency])
-            });
-            setCurrencyData(temp);
+        API.CurrencyAPI.getCurencies().then(response=>{
+            setCurrencyData(response);
             fetchTimezones()
-        }).catch(function (error) {
+        }).catch(error=>{
             setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
     }
 
     function fetchTimezones(){
-        axios.get('https://intense-plateau-30917.herokuapp.com/timezone/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = [];
-            Object.keys(response.data).map((currency)=>{
-                temp.push(response.data[currency])
-            });
-            setTimeZoneData(temp);
+        API.TimeZoneAPI.getTimeZones().then(response=>{
+            setTimeZoneData(response);
             fetchCountries()
-        }).catch(function (error) {
+        }).catch(error=>{
             setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
     }
 
     function fetchCountries(){
-        axios.get('https://intense-plateau-30917.herokuapp.com/country/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = [];
-            Object.keys(response.data).map((currency)=>{
-                temp.push(response.data[currency])
-            });
-            setCountryData(temp);
+        API.CountryAPI.getCountries().then(response=>{
+           setCountryData(response)
+           setShowLoader(false)
+        }).catch(error=>{
             setShowLoader(false)
-        }).catch(function (error) {
-            setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
     }
 
 
-    function insertUsers(users){
+    function insertCity(cities){
         setQueryActive(true)
-        axios.post('https://intense-plateau-30917.herokuapp.com/city/insert', users,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            let temp = data.slice();
-            users.map((item)=>{temp.push(item)});
-            setData(temp)
-
-            setQueryActive(false)
+        API.CityAPI.insertCities(cities).then(response=>{
+            cities.map((item) =>{setData(oldArray => [...oldArray, item])});
             setShowAddPopUp(false)
             setSelectedRows([]);
-            makeSnackbar("All users added successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            setShowLoader(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
+
+           responseFeedback(true)
+        }).catch(error=>{
+           responseFeedback(false)
         });
     }
 
-    function fetchUsers(){
+    function fetchCities(){
         setShowLoader(true)
-        axios.get('https://intense-plateau-30917.herokuapp.com/city/all', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then(function (response) {
-            let temp = []
-            Object.keys(response.data).map((user)=>{
-                temp.push(response.data[user])
-            });
-            setData(temp)
-            setSelectedRows([])
-            fetchCurrencies()
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
+        API.CityAPI.getCities().then(response=>{
+           setData(response);
+           fetchCurrencies();
+        }).catch(error=>{
+            responseFeedback(false)
             setShowLoader(false)
-
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
         });
+
     }
 
     function updateUsers() {
-        setQueryActive(true)
-        axios.post('https://intense-plateau-30917.herokuapp.com/city/update', updatedRows.map((item)=>{return item.data}),{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            let temp = []
-            Object.keys(response.data).map((user)=>{
-                temp.push(response.data[user])
-            });
-            setQueryActive(false)
-            setSelectedRows([]);
-            makeSnackbar("City data updated successfully!", true)
-        }).catch(function (error) {
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            setQueryActive(false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
+        setQueryActive(true);
+        API.CityAPI.updateCities(updatedRows.map((item)=>{return item.data})).then(response=>{
+            responseFeedback(true)
+        }).catch(error=>{
+            responseFeedback(false)
         });
     }
 
     function removeCity() {
-        setQueryActive(true)
-        var selected = selectedRows.map((item)=>{return item.data})
-        var temp = data.slice()
+        setQueryActive(true);
+        const selected = selectedRows.map((item)=>{return item.data})
 
-        axios.post('https://intense-plateau-30917.herokuapp.com/city/delete', selected,{
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then(function (response) {
-            selected.map((item)=>{
-                temp = temp.filter((row) => {return item.cityName !== row.cityName})});
-            setData([])
-            setData(temp);
+        API.CityAPI.deleteCities(selected).then(response=>{
+            setData([]);
             setSelectedRows([]);
-            setQueryActive(false);
-            makeSnackbar("All selected cities were removed successfully!", true)
-        }).catch(function (error) {
-            setShowLoader(false)
-            makeSnackbar("Something went wrong! Please try again later.", false)
-            if (error.response) {
-                console.log(error.response.headers);
-            }
-            else if (error.request) {
-                console.log(error.request);
-            }
-            else {
-                console.log(error.message);
-            }
-            console.log(error.config);
+            selected.map((item)=>setData(data.filter((row)=>{return item.cityName !== row.cityName})));
+            responseFeedback(true);
+        }).catch(error=>{
+            responseFeedback(false);
         });
-
     }
-
 }

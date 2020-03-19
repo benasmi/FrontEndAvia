@@ -15,7 +15,6 @@ export default function UserPage() {
     const [data, setData] = useState([]);
     const [countryData, setCountryData] = useState([]);
     const [cardsProviderData, setCardsProviderData] = useState([]);
-    const [fetchedData, setFetchData] = useState(false);
     const [updatedRows, setUpdatedRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -37,7 +36,7 @@ export default function UserPage() {
     };
 
     const headers = [
-        {key:"", editable:true, selectable: false},
+        {key:"checkbox", editable:true, selectable: false},
         {key:"name", editable:true, selectable: false},
         {key:"surname", editable:false, selectable: false},
         {key:"gender", editable:false, selectable: false},
@@ -46,10 +45,10 @@ export default function UserPage() {
         {key:"email", editable:false, selectable: false}
     ];
 
-    if(!fetchedData){
-        setFetchData(true)
-        fetchUsers()
-    }
+    useEffect(()=>{
+          fetchUsers()
+        },[]);
+
 
     function submitComplexUserForm(data){
         insertUsersWithCards(data)
@@ -60,7 +59,7 @@ export default function UserPage() {
             {showLoader ?
                 <CustomLoader/> :
                 complexFormEnabled ? <AddUserComplex
-                    closeComplexForm={setComplexFormEnabled(false)}
+                    closeComplexForm={e=>{setComplexFormEnabled(false)}}
                     submitComplexUserForm={submitComplexUserForm}
                     selectableData={{countries: countryData, cardsProviderData: cardsProviderData}}
                     />
@@ -71,6 +70,7 @@ export default function UserPage() {
                             data={data}
                             setData={setData}
                             setUpdatedRows={setUpdatedRows}
+                            selectedRows={selectedRows}
                             setSelectedRows={setSelectedRows}
                         />
                         <div className="w-75 d-flex justify-content-end ">
@@ -91,7 +91,6 @@ export default function UserPage() {
                             </ButtonToolbar>
                         </div>
 
-
                         <AddUserModal
                             selectableData={{countries: countryData}}
                             show={showAddPopUp}
@@ -102,8 +101,8 @@ export default function UserPage() {
                     </div>
             }
 
-            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={setShowStatus(false)}>
-                <Alert onClose={setShowStatus(false)} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
+            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={e=>{setShowStatus(false)}}>
+                <Alert onClose={e=>{setShowStatus(false)}} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
                     {snackbarConfig.message}
                 </Alert>
             </Snackbar>
@@ -173,11 +172,16 @@ export default function UserPage() {
     }
 
     function removeUsers() {
-        setQueryActive(true)
+        setQueryActive(true);
         const selected = selectedRows.map((item)=>{return item.data});
         API.UsersAPI.removeUsers(selected).then(response=>{
-            selected.map((item)=>setData(data.filter((row)=>{return item.email !== row.email})));
-            responseFeedback(true);
+            API.UsersAPI.getUsers().then(response=>{
+                setSelectedRows([]);
+                setData(response);
+                responseFeedback(true);
+            }).catch(error=>{
+                responseFeedback(false)
+            });
         }).catch(error=>{
             responseFeedback(false)
         });
