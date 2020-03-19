@@ -8,6 +8,7 @@ import CustomLoader from "../Components/CustomLoader";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import API from "../Networking/API";
+import SnackbarFeedback from "../Components/SnackbarFeedback";
 
 export default function CityPage() {
     //Data hooks
@@ -27,7 +28,7 @@ export default function CityPage() {
     const [showLoader, setShowLoader] = useState(false);
     const [isQueryActive, setQueryActive] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({message:"", isSuccessful: false});
+    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
 
     const MESSAGES = {
         SUCCESS: "Your request to server went successfully!",
@@ -88,11 +89,11 @@ export default function CityPage() {
 
                     {isQueryActive ? <CustomLoader/> : null}
 
-                    <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={e=>{setShowStatus(false)}}>
-                        <Alert onClose={e=>{setShowStatus(false)}} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
-                            {snackbarConfig.message}
-                        </Alert>
-                    </Snackbar>
+                    <SnackbarFeedback
+                        show={showStatus}
+                        setShow={setShowStatus}
+                        snackbarConfig={snackbarConfig}
+                    />
 
                 </div>
 
@@ -101,13 +102,9 @@ export default function CityPage() {
         </div>
     );
 
-    function makeSnackbar(message, isSuccessful) {
-        setSnackBarConfig({message: message, isSuccessful: isSuccessful})
-        setShowStatus(true)
-    }
-
     function responseFeedback(success){
-        makeSnackbar(success ? MESSAGES.SUCCESS : MESSAGES.ERROR, success)
+        setSnackBarConfig({isSuccessful: success})
+        setShowStatus(true);
         setQueryActive(false)
     }
 

@@ -4,11 +4,13 @@ import API from "../Networking/API";
 import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
+import UpdateCountryModal from "../Components/UpdateCountryModal";
 
-export default function CurrencyPage() {
+export default function CountryPage() {
 
     const [data, setData] = useState([]);
-    const [selectedRow, setSelectedRow] = useState({currency:""});
+
+    const [selectedRow, setSelectedRow] = useState({country:"", countryCode:"", numericCode:""});
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
@@ -16,22 +18,20 @@ export default function CurrencyPage() {
     const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
     const [isQueryActive, setQueryActive] = useState(false);
 
-
     const headers = [
-        {key:"id", editable:false, selectable: false},
-        {key:"currency", editable:false, selectable: false},
+        {key:"country", editable:false, selectable: false},
+        {key:"countryCode", editable:false, selectable: false},
+        {key:"numericCode", editable:false, selectable: false},
         {key:"singleSelection", editable:false, selectable: false}
-
     ];
 
     useEffect(()=>{
-        fetchCurrency()
+        fetchCountry()
     },[])
 
-
-    function fetchCurrency(){
+    function fetchCountry(){
         setShowLoader(true)
-        API.CurrencyAPI.getCurencies().then(response=>{
+        API.CountryAPI.getCountries().then(response=>{
             setData(response)
             setShowLoader(false)
         }).catch(error=>{
@@ -39,15 +39,10 @@ export default function CurrencyPage() {
         });
     }
 
-    function UpdateRow(row) {
-        setSelectedRow(row);
-        setShowModal(true)
-    }
-
     function DeleteRow(row) {
         setQueryActive(true)
-        API.CurrencyAPI.deleteCurrency(row).then(response=>{
-            API.CurrencyAPI.getCurencies().then(response=>{
+        API.CountryAPI.deleteCountry(row).then(response=>{
+            API.CountryAPI.getCountries().then(response=>{
                 setData(response)
                 responseFeedback(true)
             }).catch(error=>{
@@ -58,14 +53,18 @@ export default function CurrencyPage() {
         });
     }
 
-    function updateCurrency(updatedRow){
+    function updateCountry(updatedRow){
         setQueryActive(true)
-        API.CurrencyAPI.updateCurrency(updatedRow).then(response=>{
+        API.CountryAPI.updateCountry(updatedRow).then(response=>{
             responseFeedback(true)
             setShowModal(false)
         }).catch(error=>{
             responseFeedback(false)
         });
+    }
+
+    function UpdateRow(row) {
+        setSelectedRow(row)
     }
 
     return(
@@ -80,11 +79,11 @@ export default function CurrencyPage() {
                 />
             }
 
-            <UpdateCurrencyModal
+            <UpdateCountryModal
                 show={showModal}
                 dataRow={selectedRow}
                 setDataRow={setSelectedRow}
-                updateCurrency={updateCurrency}
+                updateCountry={updateCountry}
                 onHide={e=>{
                     setShowModal(false)
                 }}
@@ -97,7 +96,6 @@ export default function CurrencyPage() {
             />
 
             {isQueryActive ? <CustomLoader/> : null}
-
         </div>
 
     );

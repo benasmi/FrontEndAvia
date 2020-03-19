@@ -2,36 +2,40 @@ import React, {useState, useEffect} from "react";
 import SingleSelectionComponent from "../Components/SingleSelectionComponent";
 import API from "../Networking/API";
 import CustomLoader from "../Components/CustomLoader";
-import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
+import UpdateSuggestionModal from "../Components/UpdateSuggestionModal";
 
-export default function CurrencyPage() {
+export default function SuggestionPage() {
 
     const [data, setData] = useState([]);
-    const [selectedRow, setSelectedRow] = useState({currency:""});
+    const [selectedRow, setSelectedRow] = useState({placeName:"", isFamilyFriendly:"", ticketPrice:"", imageUrl: ""});
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
     const [isQueryActive, setQueryActive] = useState(false);
-
-
     const headers = [
-        {key:"id", editable:false, selectable: false},
-        {key:"currency", editable:false, selectable: false},
+        {key:"placeName", editable:false, selectable: false},
+        {key:"isFamilyFriendly", editable:false, selectable: false},
+        {key:"ticketPrice", editable:false, selectable: false},
+        {key:"imageUrl", editable:false, selectable: false},
+        {key:"suggestionId", editable:false, selectable: false},
+        {key:"fk_cityName", editable:false, selectable: false},
         {key:"singleSelection", editable:false, selectable: false}
 
     ];
 
     useEffect(()=>{
-        fetchCurrency()
+        fetchSuggestions()
     },[])
 
-
-    function fetchCurrency(){
+    function fetchSuggestions(){
         setShowLoader(true)
-        API.CurrencyAPI.getCurencies().then(response=>{
+        API.SuggestionAPI.getSuggestions().then(response=>{
+            response.map((row)=>{
+                row.imageUrl=row.imageUrl.substring(0,20)
+            })
             setData(response)
             setShowLoader(false)
         }).catch(error=>{
@@ -40,14 +44,13 @@ export default function CurrencyPage() {
     }
 
     function UpdateRow(row) {
-        setSelectedRow(row);
-        setShowModal(true)
+        console.log(row)
     }
 
     function DeleteRow(row) {
         setQueryActive(true)
-        API.CurrencyAPI.deleteCurrency(row).then(response=>{
-            API.CurrencyAPI.getCurencies().then(response=>{
+        API.SuggestionAPI.deleteSuggestion(row).then(response=>{
+            API.SuggestionAPI.getSuggestions().then(response=>{
                 setData(response)
                 responseFeedback(true)
             }).catch(error=>{
@@ -58,14 +61,20 @@ export default function CurrencyPage() {
         });
     }
 
-    function updateCurrency(updatedRow){
+    function updateSuggestion(updatedRow){
         setQueryActive(true)
-        API.CurrencyAPI.updateCurrency(updatedRow).then(response=>{
+        API.SuggestionAPI.updateSuggestion(updatedRow).then(response=>{
             responseFeedback(true)
             setShowModal(false)
         }).catch(error=>{
             responseFeedback(false)
         });
+    }
+
+    function responseFeedback(success){
+        setSnackbarConfig({isSuccessful: success})
+        setShowStatus(true);
+        setQueryActive(false)
     }
 
     return(
@@ -80,11 +89,11 @@ export default function CurrencyPage() {
                 />
             }
 
-            <UpdateCurrencyModal
+            <UpdateSuggestionModal
                 show={showModal}
                 dataRow={selectedRow}
                 setDataRow={setSelectedRow}
-                updateCurrency={updateCurrency}
+                updateSuggestion={updateSuggestion}
                 onHide={e=>{
                     setShowModal(false)
                 }}
@@ -97,15 +106,7 @@ export default function CurrencyPage() {
             />
 
             {isQueryActive ? <CustomLoader/> : null}
-
         </div>
 
     );
-
-
-    function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
-        setQueryActive(false)
-    }
 }

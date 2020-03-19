@@ -5,12 +5,13 @@ import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 
-export default function CurrencyPage() {
+export default function TimeZonePage() {
 
     const [data, setData] = useState([]);
-    const [selectedRow, setSelectedRow] = useState({currency:""});
     const [showLoader, setShowLoader] = useState(false);
+
     const [showModal, setShowModal] = useState(false);
+    const [selectedRow, setSelectedRow] = useState({timeZone:""});
 
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
@@ -19,19 +20,18 @@ export default function CurrencyPage() {
 
     const headers = [
         {key:"id", editable:false, selectable: false},
-        {key:"currency", editable:false, selectable: false},
+        {key:"timeZone", editable:false, selectable: false},
         {key:"singleSelection", editable:false, selectable: false}
 
     ];
 
     useEffect(()=>{
-        fetchCurrency()
+        fetchTimeZone()
     },[])
 
-
-    function fetchCurrency(){
+    function fetchTimeZone(){
         setShowLoader(true)
-        API.CurrencyAPI.getCurencies().then(response=>{
+        API.TimeZoneAPI.getTimeZones().then(response=>{
             setData(response)
             setShowLoader(false)
         }).catch(error=>{
@@ -46,8 +46,8 @@ export default function CurrencyPage() {
 
     function DeleteRow(row) {
         setQueryActive(true)
-        API.CurrencyAPI.deleteCurrency(row).then(response=>{
-            API.CurrencyAPI.getCurencies().then(response=>{
+        API.TimeZoneAPI.deleteTimeZones(row).then(response=>{
+            API.TimeZoneAPI.getTimeZones().then(response=>{
                 setData(response)
                 responseFeedback(true)
             }).catch(error=>{
@@ -58,14 +58,19 @@ export default function CurrencyPage() {
         });
     }
 
-    function updateCurrency(updatedRow){
+    function updateTimezone(updatedRow){
         setQueryActive(true)
-        API.CurrencyAPI.updateCurrency(updatedRow).then(response=>{
+        API.TimeZoneAPI.updateTimeZones(updatedRow).then(response=>{
             responseFeedback(true)
-            setShowModal(false)
         }).catch(error=>{
             responseFeedback(false)
-        });
+        })
+    }
+
+    function responseFeedback(success){
+        setSnackbarConfig({isSuccessful: success})
+        setShowStatus(true);
+        setQueryActive(false)
     }
 
     return(
@@ -84,7 +89,7 @@ export default function CurrencyPage() {
                 show={showModal}
                 dataRow={selectedRow}
                 setDataRow={setSelectedRow}
-                updateCurrency={updateCurrency}
+                updateTimezone={updateTimezone}
                 onHide={e=>{
                     setShowModal(false)
                 }}
@@ -97,15 +102,7 @@ export default function CurrencyPage() {
             />
 
             {isQueryActive ? <CustomLoader/> : null}
-
         </div>
 
     );
-
-
-    function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
-        setQueryActive(false)
-    }
 }

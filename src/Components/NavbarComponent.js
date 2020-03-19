@@ -9,6 +9,10 @@ export default function NavbarComponent() {
             <Nav className="mr-auto">
                 <NavLink className="d-inline p-2 bg-dark text-white" to="/users">Users</NavLink>
                 <NavLink className="d-inline p-2 bg-dark text-white" to="/city">Cities</NavLink>
+                <NavLink className="d-inline p-2 bg-dark text-white" to="/currency">Currencies</NavLink>
+                <NavLink className="d-inline p-2 bg-dark text-white" to="/timezone">Time Zones</NavLink>
+                <NavLink className="d-inline p-2 bg-dark text-white" to="/country">Countries</NavLink>
+                <NavLink className="d-inline p-2 bg-dark text-white" to="/suggestion">Suggestions</NavLink>
             </Nav>
         </Navbar>
     )

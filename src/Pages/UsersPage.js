@@ -6,6 +6,7 @@ import {Button, ButtonToolbar} from "react-bootstrap"
 import AddUserModal from "../Components/AddUserModal";
 import AddUserComplex from "../Components/AddUserComplex";
 import CustomLoader from "../Components/CustomLoader";
+import SnackbarFeedback from "../Components/SnackbarFeedback";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import API from "../Networking/API";
@@ -25,15 +26,10 @@ export default function UserPage() {
     const [showLoader, setShowLoader] = useState(false);
     const [isQueryActive, setQueryActive] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({message: "", isSuccessful: false});
+    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
 
     //Forms manipulation
     const [complexFormEnabled, setComplexFormEnabled] = useState(false);
-
-    const MESSAGES = {
-        SUCCESS: "Your request to server went successfully!",
-        ERROR: "Something went wrong! Please try again later."
-    };
 
     const headers = [
         {key:"checkbox", editable:true, selectable: false},
@@ -101,11 +97,11 @@ export default function UserPage() {
                     </div>
             }
 
-            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={showStatus} autoHideDuration={3000} onClose={e=>{setShowStatus(false)}}>
-                <Alert onClose={e=>{setShowStatus(false)}} severity={snackbarConfig.isSuccessful ? "success" : "error"}>
-                    {snackbarConfig.message}
-                </Alert>
-            </Snackbar>
+            <SnackbarFeedback
+                show={showStatus}
+                setShow={setShowStatus}
+                snackbarConfig={snackbarConfig}
+            />
 
             {isQueryActive ? <CustomLoader/> : null}
         </div>
@@ -188,13 +184,9 @@ export default function UserPage() {
     }
 
     function responseFeedback(success){
-        makeSnackbar(success ? MESSAGES.SUCCESS : MESSAGES.ERROR, success)
-        setQueryActive(false)
-    }
-
-    function makeSnackbar(message, isSuccessful) {
-        setSnackBarConfig({message: message, isSuccessful: isSuccessful})
         setShowStatus(true)
+        setSnackBarConfig({isSuccessful: success})
+        setQueryActive(false)
     }
 
     function addAllUsers(users) {
