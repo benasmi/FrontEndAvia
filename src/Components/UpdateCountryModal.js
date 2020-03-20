@@ -30,11 +30,13 @@ export default function UpdateCountryModal(props) {
                 <div className="d-flex flex-column w-50 justify-content-center align-content-center h-50 ">
                         <Row>
                             <Col>
+                                <Form.Label>Country</Form.Label>
                                 <Form.Control placeholder="Country" name="country" value={props.dataRow.country} onChange={handleChanges}/>
                             </Col>
                         </Row>
                         <Row className="mt-4">
                             <Col>
+                                <Form.Label>Country code</Form.Label>
                                 <Form.Control placeholder="Country code" name="countryCode" value={props.dataRow.countryCode} onChange={handleChanges}/>
                             </Col>
                         </Row>

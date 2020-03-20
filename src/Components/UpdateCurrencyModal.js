@@ -31,6 +31,7 @@ export default function UpdateCurrencyModal(props) {
                     <div className="d-flex justify-content-center w-100 h-75 flex-row">
                             <Row>
                                 <Col>
+                                    <Form.Label>Email address</Form.Label>
                                     <Form.Control placeholder="Currency" name="currency" value={props.dataRow.currency} onChange={handleChanges}/>
                                 </Col>
                             </Row>

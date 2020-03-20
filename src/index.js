@@ -10,6 +10,7 @@ import {HashRouter, Route, Link, BrowserRouter as Router, NavLink} from 'react-r
 import TimeZonePage from "./Pages/TimeZonePage";
 import CountryPage from "./Pages/CountryPage";
 import SuggestionPage from "./Pages/SuggestionPage";
+import StatisticsPage from "./Pages/StatisticsPage";
 
 
 const routing = (
@@ -22,6 +23,8 @@ const routing = (
                 <Route path="/timezone" component={TimeZonePage} />
                 <Route path="/country" component={CountryPage} />
                 <Route path="/suggestion" component={SuggestionPage} />
+                <Route path="/statistics" component={StatisticsPage} />
+
         </HashRouter>
     </div>
 

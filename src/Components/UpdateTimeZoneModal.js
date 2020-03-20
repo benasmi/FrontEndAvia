@@ -31,6 +31,7 @@ export default function UpdateTimeZoneModal(props) {
                     <div className="d-flex justify-content-center w-100 h-75 flex-row">
                         <Row>
                             <Col>
+                                <Form.Label>Time zone</Form.Label>
                                 <Form.Control placeholder="Time zone" name="timeZone" value={props.dataRow.timeZone} onChange={handleChanges}/>
                             </Col>
                         </Row>

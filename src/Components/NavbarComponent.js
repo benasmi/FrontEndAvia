@@ -13,6 +13,7 @@ export default function NavbarComponent() {
                 <NavLink className="d-inline p-2 bg-dark text-white" to="/timezone">Time Zones</NavLink>
                 <NavLink className="d-inline p-2 bg-dark text-white" to="/country">Countries</NavLink>
                 <NavLink className="d-inline p-2 bg-dark text-white" to="/suggestion">Suggestions</NavLink>
+                <NavLink className="d-inline p-2 bg-dark text-white" to="/statistics">Statistics</NavLink>
             </Nav>
         </Navbar>
     )

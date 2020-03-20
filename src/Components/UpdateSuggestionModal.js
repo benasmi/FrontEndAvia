@@ -30,16 +30,19 @@ export default function UpdateSuggestionModal(props) {
                 <div className="d-flex  flex-column w-100 h-50 ">
                         <Row>
                             <Col>
+                                <Form.Label>Place name</Form.Label>
                                 <Form.Control placeholder="Place name" name="placeName" value={props.dataRow.placeName} onChange={handleChanges}/>
                             </Col>
                         </Row>
                         <Row className="mt-4">
                             <Col>
+                                <Form.Label>Ticket price</Form.Label>
                                 <Form.Control placeholder="Ticket price" name="ticketPrice" value={props.dataRow.ticketPrice} onChange={handleChanges}/>
                             </Col>
                         </Row>
                         <Row className="mt-4">
                             <Col >
+                                <Form.Label>Is family friendly?</Form.Label>
                                 <Form.Control as="select" name="isFamilyFriendly" value={props.dataRow.isFamilyFriendly} onChange={handleChanges}>
                                     <option value="1">Family friendly</option>
                                     <option value="0">Adults only</option>
