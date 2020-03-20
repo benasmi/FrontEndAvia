@@ -26,9 +26,8 @@ export default function UpdateSuggestionModal(props) {
                     Update currency
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="d-flex justify-content-center">
                 <div className="d-flex  flex-column w-100 h-50 ">
-                    <div className="d-flex justify-content-center w-100 h-75 flex-row">
                         <Row>
                             <Col>
                                 <Form.Control placeholder="Place name" name="placeName" value={props.dataRow.placeName} onChange={handleChanges}/>
@@ -40,18 +39,14 @@ export default function UpdateSuggestionModal(props) {
                             </Col>
                         </Row>
                         <Row className="mt-4">
-                            <Col>
-                                <Form.Control placeholder="Image Url" name="imageUrl" value={props.dataRow.imageUrl} onChange={handleChanges}/>
+                            <Col >
+                                <Form.Control as="select" name="isFamilyFriendly" value={props.dataRow.isFamilyFriendly} onChange={handleChanges}>
+                                    <option value="1">Family friendly</option>
+                                    <option value="0">Adults only</option>
+                                </Form.Control>
                             </Col>
                         </Row>
-                        <Col className="mt-4">
-                            <Form.Control as="select" name="isFamilyFriendly" value={props.data.isFamilyFriendly} onChange={handleChanges}>
-                                <option>Is family friendly?</option>
-                                <option value="1">Family friendly</option>
-                                <option value="0">Adults only</option>
-                            </Form.Control>
-                        </Col>
-                    </div>
+
                 </div>
             </Modal.Body>
             <Modal.Footer>

@@ -4,6 +4,7 @@ import API from "../Networking/API";
 import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
+import UpdateTimeZoneModal from "../Components/UpdateTimeZoneModal";
 
 export default function TimeZonePage() {
 
@@ -60,7 +61,14 @@ export default function TimeZonePage() {
 
     function updateTimezone(updatedRow){
         setQueryActive(true)
+        console.log(updatedRow)
         API.TimeZoneAPI.updateTimeZones(updatedRow).then(response=>{
+            const tempData = data.slice();
+            tempData.map((item,idx)=>{if(item.id === updatedRow.id){
+                tempData[idx] = updatedRow
+            }});
+            setData(tempData);
+            setShowModal(false);
             responseFeedback(true)
         }).catch(error=>{
             responseFeedback(false)
@@ -85,11 +93,11 @@ export default function TimeZonePage() {
                 />
             }
 
-            <UpdateCurrencyModal
+            <UpdateTimeZoneModal
                 show={showModal}
                 dataRow={selectedRow}
                 setDataRow={setSelectedRow}
-                updateTimezone={updateTimezone}
+                updateTimeZone={updateTimezone}
                 onHide={e=>{
                     setShowModal(false)
                 }}

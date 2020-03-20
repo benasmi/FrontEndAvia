@@ -48,7 +48,7 @@ export default function CurrencyPage() {
         setQueryActive(true)
         API.CurrencyAPI.deleteCurrency(row).then(response=>{
             API.CurrencyAPI.getCurencies().then(response=>{
-                setData(response)
+                setData(response);
                 responseFeedback(true)
             }).catch(error=>{
                 responseFeedback(false)
@@ -60,9 +60,15 @@ export default function CurrencyPage() {
 
     function updateCurrency(updatedRow){
         setQueryActive(true)
+        console.log(updatedRow)
         API.CurrencyAPI.updateCurrency(updatedRow).then(response=>{
             responseFeedback(true)
             setShowModal(false)
+            const tempData = data.slice();
+            tempData.map((item,idx)=>{if(item.id === updatedRow.id){
+                tempData[idx] = updatedRow
+            }})
+            setData(tempData)
         }).catch(error=>{
             responseFeedback(false)
         });

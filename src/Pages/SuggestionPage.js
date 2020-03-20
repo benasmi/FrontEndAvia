@@ -8,7 +8,7 @@ import UpdateSuggestionModal from "../Components/UpdateSuggestionModal";
 export default function SuggestionPage() {
 
     const [data, setData] = useState([]);
-    const [selectedRow, setSelectedRow] = useState({placeName:"", isFamilyFriendly:"", ticketPrice:"", imageUrl: ""});
+    const [selectedRow, setSelectedRow] = useState({placeName:"", isFamilyFriendly:"", suggestionId:"", ticketPrice:""});
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
@@ -19,7 +19,6 @@ export default function SuggestionPage() {
         {key:"placeName", editable:false, selectable: false},
         {key:"isFamilyFriendly", editable:false, selectable: false},
         {key:"ticketPrice", editable:false, selectable: false},
-        {key:"imageUrl", editable:false, selectable: false},
         {key:"suggestionId", editable:false, selectable: false},
         {key:"fk_cityName", editable:false, selectable: false},
         {key:"singleSelection", editable:false, selectable: false}
@@ -44,7 +43,8 @@ export default function SuggestionPage() {
     }
 
     function UpdateRow(row) {
-        console.log(row)
+        setSelectedRow(row);
+        setShowModal(true);
     }
 
     function DeleteRow(row) {
@@ -64,6 +64,11 @@ export default function SuggestionPage() {
     function updateSuggestion(updatedRow){
         setQueryActive(true)
         API.SuggestionAPI.updateSuggestion(updatedRow).then(response=>{
+            const tempData = data.slice();
+            tempData.map((item,idx)=>{if(item.suggestionId === updatedRow.suggestionId){
+                tempData[idx] = updatedRow
+            }});
+            setData(tempData);
             responseFeedback(true)
             setShowModal(false)
         }).catch(error=>{

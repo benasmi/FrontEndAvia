@@ -13,8 +13,8 @@ const CardsProviderAPI = {getCardsProviders};
 
 //Countries
 const getCountries = () => RequestType.getRequest("/country/all");
-const updateCountry = () => RequestType.postRequest("/country/update");
-const deleteCountry = () => RequestType.postRequest("/country/delete");
+const updateCountry = (data) => RequestType.postRequest("/country/update", data);
+const deleteCountry = (data) => RequestType.postRequest("/country/delete", data);
 const CountryAPI ={getCountries, updateCountry, deleteCountry};
 
 //Cards
@@ -23,8 +23,8 @@ const CardsAPI ={insertCardsWithUser};
 
 //Currency
 const getCurencies = () => RequestType.getRequest("/currency/all");
-const updateCurrency = () => RequestType.postRequest("/currency/update");
-const deleteCurrency = () => RequestType.postRequest("/currency/delete");
+const updateCurrency = (data) => RequestType.postRequest("/currency/update", data);
+const deleteCurrency = (data) => RequestType.postRequest("/currency/delete", data);
 const CurrencyAPI ={getCurencies, updateCurrency, deleteCurrency};
 
 //City
@@ -36,15 +36,15 @@ const CityAPI = {getCities, insertCities, updateCities,deleteCities};
 
 //TimeZones
 const getTimeZones = () => RequestType.getRequest("/timezone/all")
-const updateTimeZones = () => RequestType.postRequest("/timezone/update");
-const deleteTimeZones = () => RequestType.postRequest("/timezone/delete");
+const updateTimeZones = (data) => RequestType.postRequest("/timezone/update", data);
+const deleteTimeZones = (data) => RequestType.postRequest("/timezone/delete", data);
 
 const TimeZoneAPI = {getTimeZones, updateTimeZones,deleteTimeZones};
 
 //Suggestions
 const getSuggestions = () => RequestType.getRequest("/suggestion/all")
-const updateSuggestion = () => RequestType.postRequest("/suggestion/update");
-const deleteSuggestion = () => RequestType.postRequest("/suggestion/delete");
+const updateSuggestion = (data) => RequestType.postRequest("/suggestion/update", data);
+const deleteSuggestion = (data) => RequestType.postRequest("/suggestion/delete", data);
 const SuggestionAPI = {getSuggestions,updateSuggestion,deleteSuggestion}
 
 const API = {UsersAPI, CardsProviderAPI, CountryAPI, CardsAPI, CurrencyAPI, CityAPI, TimeZoneAPI, SuggestionAPI};

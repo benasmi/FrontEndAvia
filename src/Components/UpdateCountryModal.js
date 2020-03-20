@@ -26,9 +26,8 @@ export default function UpdateCountryModal(props) {
                     Update country
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <div className="d-flex  flex-column w-100 h-50 ">
-                    <div className="d-flex justify-content-center w-100 h-75 flex-row">
+            <Modal.Body className="d-flex justify-content-center">
+                <div className="d-flex flex-column w-50 justify-content-center align-content-center h-50 ">
                         <Row>
                             <Col>
                                 <Form.Control placeholder="Country" name="country" value={props.dataRow.country} onChange={handleChanges}/>
@@ -39,7 +38,6 @@ export default function UpdateCountryModal(props) {
                                 <Form.Control placeholder="Country code" name="countryCode" value={props.dataRow.countryCode} onChange={handleChanges}/>
                             </Col>
                         </Row>
-                    </div>
                 </div>
             </Modal.Body>
             <Modal.Footer>

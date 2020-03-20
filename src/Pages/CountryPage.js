@@ -56,6 +56,11 @@ export default function CountryPage() {
     function updateCountry(updatedRow){
         setQueryActive(true)
         API.CountryAPI.updateCountry(updatedRow).then(response=>{
+            const tempData = data.slice();
+            tempData.map((item,idx)=>{if(item.numericCode === updatedRow.numericCode){
+                tempData[idx] = updatedRow
+            }});
+            setData(tempData);
             responseFeedback(true)
             setShowModal(false)
         }).catch(error=>{
@@ -64,6 +69,7 @@ export default function CountryPage() {
     }
 
     function UpdateRow(row) {
+        setShowModal(true)
         setSelectedRow(row)
     }
 

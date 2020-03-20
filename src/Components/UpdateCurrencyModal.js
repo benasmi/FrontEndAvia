@@ -38,7 +38,7 @@ export default function UpdateCurrencyModal(props) {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={(e)=>props.updateTimezone(props.dataRow)}>Update</Button>
+                <Button variant="primary" onClick={(e)=>props.updateCurrency(props.dataRow)}>Update</Button>
             </Modal.Footer>
         </Modal>
     )
