@@ -25,7 +25,7 @@ export default function CityPage() {
     const [showAddPopUp, setShowAddPopUp] = useState(false);
 
     //Feedback hooks
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
     const [isQueryActive, setQueryActive] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});

@@ -9,7 +9,7 @@ export default function SuggestionPage() {
 
     const [data, setData] = useState([]);
     const [selectedRow, setSelectedRow] = useState({placeName:"", isFamilyFriendly:"", suggestionId:"", ticketPrice:""});
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
     const [showStatus, setShowStatus] = useState(false);
@@ -86,7 +86,7 @@ export default function SuggestionPage() {
         <div className="content">
             {showLoader ? <CustomLoader/> :
                 <SingleSelectionComponent
-                    title={"Currency"}
+                    title={"Suggestions(SF)"}
                     header={headers}
                     data={data}
                     UpdateRow={UpdateRow}

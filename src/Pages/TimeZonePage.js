@@ -9,7 +9,7 @@ import UpdateTimeZoneModal from "../Components/UpdateTimeZoneModal";
 export default function TimeZonePage() {
 
     const [data, setData] = useState([]);
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
 
     const [showModal, setShowModal] = useState(false);
     const [selectedRow, setSelectedRow] = useState({timeZone:""});
@@ -85,7 +85,7 @@ export default function TimeZonePage() {
         <div className="content">
             {showLoader ? <CustomLoader/> :
                 <SingleSelectionComponent
-                    title={"Currency"}
+                    title={"Time Zone(SF)"}
                     header={headers}
                     data={data}
                     UpdateRow={UpdateRow}

@@ -11,7 +11,7 @@ export default function CountryPage() {
     const [data, setData] = useState([]);
 
     const [selectedRow, setSelectedRow] = useState({country:"", countryCode:"", numericCode:""});
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
     const [showStatus, setShowStatus] = useState(false);
@@ -77,7 +77,7 @@ export default function CountryPage() {
         <div className="content">
             {showLoader ? <CustomLoader/> :
                 <SingleSelectionComponent
-                    title={"Currency"}
+                    title={"Country(SF)"}
                     header={headers}
                     data={data}
                     UpdateRow={UpdateRow}

@@ -9,7 +9,7 @@ export default function CurrencyPage() {
 
     const [data, setData] = useState([]);
     const [selectedRow, setSelectedRow] = useState({currency:""});
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
     const [showStatus, setShowStatus] = useState(false);
@@ -78,7 +78,7 @@ export default function CurrencyPage() {
         <div className="content">
             {showLoader ? <CustomLoader/> :
                 <SingleSelectionComponent
-                    title={"Currency"}
+                    title={"Currency(SF)"}
                     header={headers}
                     data={data}
                     UpdateRow={UpdateRow}

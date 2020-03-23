@@ -109,7 +109,7 @@ export default function TableComponent(props) {
 
     return(
         <div style={{overflowY:"scroll", maxHeight: "70%",background: "white",width: "80%"}}>
-                <Table id="table" striped bordered hover responsive="lg" size="lg">
+                <Table id="table" striped bordered hover responsive="lg" size={props.size !== undefined ? props.size : "lg"}>
                     <thead>
                     <tr>
                         {renderTableHeader()}

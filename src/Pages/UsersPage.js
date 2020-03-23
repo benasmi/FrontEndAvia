@@ -10,6 +10,7 @@ import SnackbarFeedback from "../Components/SnackbarFeedback";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import API from "../Networking/API";
+import AlertDialogCustom from "../Components/AlertDialogCustom";
 
 export default function UserPage() {
     //Data hooks
@@ -23,7 +24,7 @@ export default function UserPage() {
     const [showAddPopUp, setShowAddPopUp] = useState(false);
 
     //Feedback hooks
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
     const [isQueryActive, setQueryActive] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
     const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
@@ -102,10 +103,22 @@ export default function UserPage() {
                 setShow={setShowStatus}
                 snackbarConfig={snackbarConfig}
             />
-
+            
             {isQueryActive ? <CustomLoader/> : null}
+            {askConfirmation}
+
         </div>
     );
+
+    function askConfirmation(title, body, callback){
+        return(
+            <AlertDialogCustom
+                title={title}
+                body={body}
+                confirm={callback}
+            />
+        )
+    }
 
     function insertUsersWithCards(cardsUserData){
         setQueryActive(true)
