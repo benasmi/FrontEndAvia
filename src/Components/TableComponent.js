@@ -52,7 +52,7 @@ export default function TableComponent(props) {
 
     const renderTableHeader = () =>{
         return props.header.map((key, index) => {
-            return <th key={index}>{key.key === 'checkbox' ? "#" : key.key.toUpperCase()}</th>
+            return <th key={index}>{key.display !== undefined ? key.display.toUpperCase() : key.key.toUpperCase()}</th>
         })
     };
 

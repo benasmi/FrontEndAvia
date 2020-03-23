@@ -27,7 +27,7 @@ export default function UpdateCountryModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="d-flex justify-content-center">
-                <div className="d-flex flex-column w-50 justify-content-center align-content-center h-50 ">
+                <div className="d-flex flex-column w-75 justify-content-center align-content-center ">
                         <Row>
                             <Col>
                                 <Form.Label>Country</Form.Label>

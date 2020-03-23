@@ -26,16 +26,14 @@ export default function UpdateTimeZoneModal(props) {
                     Update time zones
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-                <div className="d-flex  flex-column w-100 h-50 ">
-                    <div className="d-flex justify-content-center w-100 h-75 flex-row">
+            <Modal.Body className="d-flex justify-content-center">
+                <div className="d-flex flex-column w-75">
                         <Row>
                             <Col>
                                 <Form.Label>Time zone</Form.Label>
                                 <Form.Control placeholder="Time zone" name="timeZone" value={props.dataRow.timeZone} onChange={handleChanges}/>
                             </Col>
                         </Row>
-                    </div>
                 </div>
             </Modal.Body>
             <Modal.Footer>

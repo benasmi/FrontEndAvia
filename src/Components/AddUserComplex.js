@@ -103,7 +103,7 @@ export default function AddUserComplex(props){
                     <h4 className="mt-5">Credit card details</h4>
                     {dataCards.map((dataRow, idx)=>{
                         return(
-                            <div className="w-100 h-100 mb-3">
+                            <div className="w-100 mb-3">
                                 <div className="w-100 d-flex mt-2 justify-content-end">
                                     <CloseButton onClick={e=>removeCreditCard(idx)}/>
                                 </div>

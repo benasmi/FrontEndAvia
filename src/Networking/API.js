@@ -47,7 +47,11 @@ const updateSuggestion = (data) => RequestType.postRequest("/suggestion/update",
 const deleteSuggestion = (data) => RequestType.postRequest("/suggestion/delete", data);
 const SuggestionAPI = {getSuggestions,updateSuggestion,deleteSuggestion}
 
-const API = {UsersAPI, CardsProviderAPI, CountryAPI, CardsAPI, CurrencyAPI, CityAPI, TimeZoneAPI, SuggestionAPI};
+//Stats
+const getFlightStats = (data) => RequestType.postRequest("/stats/flights",data);
+const StatsAPI = {getFlightStats};
+
+const API = {UsersAPI, CardsProviderAPI, CountryAPI, CardsAPI, CurrencyAPI, CityAPI, TimeZoneAPI, SuggestionAPI, StatsAPI};
 
 export default API
 

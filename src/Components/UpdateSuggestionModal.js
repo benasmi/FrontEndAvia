@@ -27,7 +27,7 @@ export default function UpdateSuggestionModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="d-flex justify-content-center">
-                <div className="d-flex  flex-column w-100 h-50 ">
+                <div className="d-flex flex-column w-75 ">
                         <Row>
                             <Col>
                                 <Form.Label>Place name</Form.Label>

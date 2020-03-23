@@ -57,8 +57,8 @@ export default function AddUserModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="d-flex  flex-column w-100 h-50 ">
-                    <div className="d-flex justify-content-center w-100 h-75 flex-row">
+                <div className="d-flex  flex-column w-100 ">
+                    <div className="d-flex justify-content-center w-100 flex-row">
                         <div className="w-50 ">
                             <Row>
                                 <Col>
