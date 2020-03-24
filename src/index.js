@@ -11,25 +11,31 @@ import TimeZonePage from "./Pages/TimeZonePage";
 import CountryPage from "./Pages/CountryPage";
 import SuggestionPage from "./Pages/SuggestionPage";
 import StatisticsPage from "./Pages/StatisticsPage";
-
-
+import SnackbarProvider from "./Contexts/SnackbarContext";
+import SnackbarFeedback from "./Components/SnackbarFeedback";
+import AlertDialogProvider from "./Contexts/AlertDialogContext";
+import AlertDialogCustom from "./Components/AlertDialogCustom";
 const routing = (
-    <div className="contentDiv">
-        <HashRouter>
-                <NavbarComponent/>
-                <Switch>
-                        <Route path="/users" component={UsersPage} />
-                        <Route path="/city" component={CityPage} />
-                        <Route path="/currency" component={CurrencyPage} />
-                        <Route path="/timezone" component={TimeZonePage} />
-                        <Route path="/country" component={CountryPage} />
-                        <Route path="/suggestion" component={SuggestionPage} />
-                        <Route path="/statistics" component={StatisticsPage} />
-                </Switch>
-        </HashRouter>
-    </div>
-
-
+            <div className="contentDiv">
+                    <HashRouter>
+                            <NavbarComponent/>
+                            <Switch>
+                                    <AlertDialogProvider>
+                                            <SnackbarProvider>
+                                                    <Route path="/users" component={UsersPage} />
+                                                    <Route path="/city" component={CityPage} />
+                                                    <Route path="/currency" component={CurrencyPage} />
+                                                    <Route path="/timezone" component={TimeZonePage} />
+                                                    <Route path="/country" component={CountryPage} />
+                                                    <Route path="/suggestion" component={SuggestionPage} />
+                                                    <Route path="/statistics" component={StatisticsPage} />
+                                                    <SnackbarFeedback/>
+                                                    <AlertDialogCustom/>
+                                            </SnackbarProvider>
+                                    </AlertDialogProvider>
+                            </Switch>
+                    </HashRouter>
+            </div>
 );
 
 ReactDOM.render(routing, document.getElementById('root'));

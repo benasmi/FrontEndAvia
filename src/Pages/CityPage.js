@@ -5,10 +5,9 @@ import TableComponent from '../Components/TableComponent'
 import {Button, ButtonToolbar} from "react-bootstrap"
 import AddCityModal from "../Components/AddCityModal";
 import CustomLoader from "../Components/CustomLoader";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
 import API from "../Networking/API";
-import SnackbarFeedback from "../Components/SnackbarFeedback";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
+import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
 
 export default function CityPage() {
     //Data hooks
@@ -27,13 +26,9 @@ export default function CityPage() {
     //Feedback hooks
     const [showLoader, setShowLoader] = useState(true);
     const [isQueryActive, setQueryActive] = useState(false);
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
 
-    const MESSAGES = {
-        SUCCESS: "Your request to server went successfully!",
-        ERROR: "Something went wrong! Please try again later."
-    };
+    const { addConfig } = UseSnackbarContext();
+    const { addAlertConfig } = UseAlertDialogContext()
 
     useEffect(()=>{
         fetchCities()
@@ -89,12 +84,6 @@ export default function CityPage() {
 
                     {isQueryActive ? <CustomLoader/> : null}
 
-                    <SnackbarFeedback
-                        show={showStatus}
-                        setShow={setShowStatus}
-                        snackbarConfig={snackbarConfig}
-                    />
-
                 </div>
 
 
@@ -103,8 +92,7 @@ export default function CityPage() {
     );
 
     function responseFeedback(success){
-        setSnackBarConfig({isSuccessful: success})
-        setShowStatus(true);
+        addConfig(success)
         setQueryActive(false)
     }
 
@@ -149,12 +137,11 @@ export default function CityPage() {
 
 
     function insertCity(cities){
-        setQueryActive(true)
+        setQueryActive(true);
         API.CityAPI.insertCities(cities).then(response=>{
             cities.map((item) =>{setData(oldArray => [...oldArray, item])});
             setShowAddPopUp(false)
             setSelectedRows([]);
-
            responseFeedback(true)
         }).catch(error=>{
            responseFeedback(false)
@@ -174,25 +161,31 @@ export default function CityPage() {
     }
 
     function updateUsers() {
-        setQueryActive(true);
-        API.CityAPI.updateCities(updatedRows.map((item)=>{return item.data})).then(response=>{
-            responseFeedback(true)
-        }).catch(error=>{
-            responseFeedback(false)
-        });
+        addAlertConfig("Update cities", "Do you really want to update selected rows", function () {
+            setQueryActive(true);
+            API.CityAPI.updateCities(updatedRows.map((item)=>{return item.data})).then(response=>{
+                responseFeedback(true)
+            }).catch(error=>{
+                responseFeedback(false)
+            });
+        })
     }
 
     function removeCity() {
-        setQueryActive(true);
-        const selected = selectedRows.map((item)=>{return item.data})
-
-        API.CityAPI.deleteCities(selected).then(response=>{
-            setData([]);
-            setSelectedRows([]);
-            selected.map((item)=>setData(data.filter((row)=>{return item.cityName !== row.cityName})));
-            responseFeedback(true);
-        }).catch(error=>{
-            responseFeedback(false);
-        });
+        addAlertConfig("Remove citites", "Do you really want to remove selected rows? Other rows who have this row as a foreign key will also be affected and deleted!", function () {
+            setQueryActive(true);
+            const selected = selectedRows.map((item)=>{return item.data})
+            API.CityAPI.deleteCities(selected).then(response=>{
+                API.CityAPI.getCities().then(response=>{
+                    setSelectedRows([])
+                    setData(response)
+                    responseFeedback(true)
+                }).catch(error=>{
+                    responseFeedback(false)
+                })
+            }).catch(error=>{
+                responseFeedback(false);
+            });
+        })
     }
 }

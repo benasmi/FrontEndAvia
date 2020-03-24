@@ -7,6 +7,7 @@ import API from "../Networking/API";
 import TableComponent from "../Components/TableComponent";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 import CustomLoader from "../Components/CustomLoader";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 
 require('react-datepicker/dist/react-datepicker.css')
 
@@ -15,8 +16,9 @@ export default function StatisticsPage(){
     const [resBody, setResBody] = useState([]);
 
     const [isQueryActive, setQueryActive] = useState(false);
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
+
+    const { addConfig } = UseSnackbarContext();
+
 
     function handleChange(e) {
         const {name, value} = e.target
@@ -99,20 +101,13 @@ export default function StatisticsPage(){
                     </div>
                     : <h4 className="mt-5">No results match query</h4>
             }
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
-            />
-
             {isQueryActive ? <CustomLoader/> : null}
 
         </div>
     )
 
     function responseFeedback(success){
-        setShowStatus(true)
-        setSnackBarConfig({isSuccessful: success})
+        addConfig(success)
         setQueryActive(false)
     }
 }

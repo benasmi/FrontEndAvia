@@ -5,6 +5,7 @@ import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 import UpdateTimeZoneModal from "../Components/UpdateTimeZoneModal";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 
 export default function TimeZonePage() {
 
@@ -14,8 +15,8 @@ export default function TimeZonePage() {
     const [showModal, setShowModal] = useState(false);
     const [selectedRow, setSelectedRow] = useState({timeZone:""});
 
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
+    const { addConfig } = UseSnackbarContext();
+
     const [isQueryActive, setQueryActive] = useState(false);
 
 
@@ -76,8 +77,7 @@ export default function TimeZonePage() {
     }
 
     function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
+        addConfig(success);
         setQueryActive(false)
     }
 
@@ -102,13 +102,6 @@ export default function TimeZonePage() {
                     setShowModal(false)
                 }}
             />
-
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
-            />
-
             {isQueryActive ? <CustomLoader/> : null}
         </div>
 

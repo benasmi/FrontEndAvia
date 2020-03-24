@@ -4,6 +4,7 @@ import API from "../Networking/API";
 import CustomLoader from "../Components/CustomLoader";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 import UpdateSuggestionModal from "../Components/UpdateSuggestionModal";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 
 export default function SuggestionPage() {
 
@@ -12,8 +13,8 @@ export default function SuggestionPage() {
     const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
+    const { addConfig } = UseSnackbarContext();
+
     const [isQueryActive, setQueryActive] = useState(false);
     const headers = [
         {key:"placeName", editable:false, selectable: false},
@@ -77,8 +78,7 @@ export default function SuggestionPage() {
     }
 
     function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
+        addConfig(success)
         setQueryActive(false)
     }
 
@@ -102,12 +102,6 @@ export default function SuggestionPage() {
                 onHide={e=>{
                     setShowModal(false)
                 }}
-            />
-
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
             />
 
             {isQueryActive ? <CustomLoader/> : null}

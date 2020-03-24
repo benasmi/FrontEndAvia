@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 
 
 export default function SnackbarFeedback(props){
 
-    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
-
+    const { config, removeConfig } = UseSnackbarContext();
 
     const MESSAGES = {
         SUCCESS: "Your request to server went successfully!",
@@ -14,11 +14,10 @@ export default function SnackbarFeedback(props){
     };
 
     return(
-            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={props.show} autoHideDuration={3000} onClose={e=>{props.setShow(false)}}>
-                <Alert onClose={e=>{props.setShow(false)}} severity={props.snackbarConfig.isSuccessful ? "success" : "error"}>
-                    {props.snackbarConfig.isSuccessful ? MESSAGES.SUCCESS : MESSAGES.ERROR}
+            <Snackbar anchorOrigin={{vertical:'bottom', horizontal:'left'}} open={!!config} autoHideDuration={3000} onClose={removeConfig}>
+                <Alert onClose={removeConfig} severity={!!config ? (config.success ? "success" : "danger") : ""}>
+                    {!!config ? (config.success ? MESSAGES.SUCCESS : MESSAGES.ERROR)  : ""}
                 </Alert>
             </Snackbar>
     )
-
 }

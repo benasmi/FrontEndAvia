@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import '../Styles/userspage.css'
-import axios from "axios"
 import TableComponent from '../Components/TableComponent'
 import {Button, ButtonToolbar} from "react-bootstrap"
 import AddUserModal from "../Components/AddUserModal";
 import AddUserComplex from "../Components/AddUserComplex";
 import CustomLoader from "../Components/CustomLoader";
-import SnackbarFeedback from "../Components/SnackbarFeedback";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
 import API from "../Networking/API";
-import AlertDialogCustom from "../Components/AlertDialogCustom";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
+import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
 
 export default function UserPage() {
     //Data hooks
@@ -26,11 +23,14 @@ export default function UserPage() {
     //Feedback hooks
     const [showLoader, setShowLoader] = useState(true);
     const [isQueryActive, setQueryActive] = useState(false);
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackBarConfig] = useState({isSuccessful: false});
+
+    const { addConfig } = UseSnackbarContext();
+    const { addAlertConfig } = UseAlertDialogContext();
 
     //Forms manipulation
     const [complexFormEnabled, setComplexFormEnabled] = useState(false);
+
+
 
     const headers = [
         {key:"checkbox", editable:true, selectable: false},
@@ -98,27 +98,10 @@ export default function UserPage() {
                     </div>
             }
 
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
-            />
-            
             {isQueryActive ? <CustomLoader/> : null}
-            {askConfirmation}
 
         </div>
     );
-
-    function askConfirmation(title, body, callback){
-        return(
-            <AlertDialogCustom
-                title={title}
-                body={body}
-                confirm={callback}
-            />
-        )
-    }
 
     function insertUsersWithCards(cardsUserData){
         setQueryActive(true)
@@ -172,33 +155,36 @@ export default function UserPage() {
     }
 
     function updateUsers() {
-        setQueryActive(true)
-        API.UsersAPI.updateUsers(updatedRows.map((item)=>{return item.data})).then(response=>{
-            responseFeedback(true)
-        }).catch(error=>{
-            responseFeedback(false)
+        addAlertConfig("Update users", "Do you really want to make any changes?", function () {
+            setQueryActive(true)
+            API.UsersAPI.updateUsers(updatedRows.map((item)=>{return item.data})).then(response=>{
+                responseFeedback(true)
+            }).catch(error=>{
+                responseFeedback(false)
+            });
         });
     }
 
     function removeUsers() {
-        setQueryActive(true);
-        const selected = selectedRows.map((item)=>{return item.data});
-        API.UsersAPI.removeUsers(selected).then(response=>{
-            API.UsersAPI.getUsers().then(response=>{
-                setSelectedRows([]);
-                setData(response);
-                responseFeedback(true);
+        addAlertConfig("Remove users", "Do you really want to remove selected users? Other rows who have this row as a foreign key will also be affected and deleted!", function(){
+            setQueryActive(true);
+            const selected = selectedRows.map((item)=>{return item.data});
+            API.UsersAPI.removeUsers(selected).then(response=>{
+                API.UsersAPI.getUsers().then(response=>{
+                    setSelectedRows([]);
+                    setData(response);
+                    responseFeedback(true);
+                }).catch(error=>{
+                    responseFeedback(false)
+                });
             }).catch(error=>{
                 responseFeedback(false)
             });
-        }).catch(error=>{
-            responseFeedback(false)
         });
     }
 
     function responseFeedback(success){
-        setShowStatus(true)
-        setSnackBarConfig({isSuccessful: success})
+        addConfig(success);
         setQueryActive(false)
     }
 

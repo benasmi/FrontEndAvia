@@ -5,6 +5,8 @@ import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 import UpdateCountryModal from "../Components/UpdateCountryModal";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
+import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
 
 export default function CountryPage() {
 
@@ -14,8 +16,9 @@ export default function CountryPage() {
     const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
+    const { addConfig } = UseSnackbarContext();
+    const { addAlertConfig } = UseAlertDialogContext();
+
     const [isQueryActive, setQueryActive] = useState(false);
 
     const headers = [
@@ -40,32 +43,34 @@ export default function CountryPage() {
     }
 
     function DeleteRow(row) {
-        setQueryActive(true)
-        API.CountryAPI.deleteCountry(row).then(response=>{
-            API.CountryAPI.getCountries().then(response=>{
-                setData(response)
-                responseFeedback(true)
+            setQueryActive(true)
+            API.CountryAPI.deleteCountry(row).then(response=>{
+                API.CountryAPI.getCountries().then(response=>{
+                    setData(response)
+                    responseFeedback(true)
+                }).catch(error=>{
+                    responseFeedback(false)
+                })
             }).catch(error=>{
                 responseFeedback(false)
-            })
-        }).catch(error=>{
-            responseFeedback(false)
-        });
+            });
     }
 
     function updateCountry(updatedRow){
-        setQueryActive(true)
-        API.CountryAPI.updateCountry(updatedRow).then(response=>{
-            const tempData = data.slice();
-            tempData.map((item,idx)=>{if(item.numericCode === updatedRow.numericCode){
-                tempData[idx] = updatedRow
-            }});
-            setData(tempData);
-            responseFeedback(true)
-            setShowModal(false)
-        }).catch(error=>{
-            responseFeedback(false)
-        });
+        addAlertConfig("Update row", "Do you really want to update this row?", function () {
+            setQueryActive(true)
+            API.CountryAPI.updateCountry(updatedRow).then(response=>{
+                const tempData = data.slice();
+                tempData.map((item,idx)=>{if(item.numericCode === updatedRow.numericCode){
+                    tempData[idx] = updatedRow
+                }});
+                setData(tempData);
+                responseFeedback(true)
+                setShowModal(false)
+            }).catch(error=>{
+                responseFeedback(false)
+            });
+        })
     }
 
     function UpdateRow(row) {
@@ -95,12 +100,6 @@ export default function CountryPage() {
                 }}
             />
 
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
-            />
-
             {isQueryActive ? <CustomLoader/> : null}
         </div>
 
@@ -108,8 +107,7 @@ export default function CountryPage() {
 
 
     function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
+        addConfig(success)
         setQueryActive(false)
     }
 }

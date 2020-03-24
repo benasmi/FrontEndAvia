@@ -1,23 +1,34 @@
 import React from "react";
 import {Modal, Button} from "react-bootstrap";
 
-export default function AlertDialogCustom(props) {
+import AlertDialogContext from "../Contexts/AlertDialogContext";
+import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
+
+const AlertDialogCustom = () => {
+
+    const {alertConfig, removeAlertConfig} = UseAlertDialogContext();
+
     return(
-        <Modal show={props.show}>
-            <Modal.Header closeButton>
-                <Modal.Title>{props.title}</Modal.Title>
-            </Modal.Header>
+                    <Modal
+                        show={!!alertConfig}
+                        onHide={removeAlertConfig}
+                        centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title>{!!alertConfig ? alertConfig.title : ""}</Modal.Title>
+                        </Modal.Header>
 
-            <Modal.Body>
-                <p>{props.body}</p>
-            </Modal.Body>
-
-            <Modal.Footer>
-                <Button variant="secondary" onClick={()=>{
-                    props.setShow(false)
-                }}>Close</Button>
-                <Button variant="primary" onClick={()=>props.confirm}>Proceed</Button>
-            </Modal.Footer>
-        </Modal>
+                        <Modal.Body>
+                            <p>{!!alertConfig ? alertConfig.message : ""}</p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={removeAlertConfig}>Close</Button>
+                            <Button variant="primary" onClick={!!alertConfig ? ()=>{
+                                removeAlertConfig()
+                                alertConfig.func()
+                            } : {}}>Proceed</Button>
+                        </Modal.Footer>
+                    </Modal>
     )
-}
+};
+
+export default AlertDialogCustom

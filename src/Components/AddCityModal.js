@@ -69,6 +69,7 @@ export default function AddCityModal(props) {
                             <Row>
                                 <Col className="mt-4">
                                     <Form.Control as="select" value={currency} onChange={(e)=>setCurrency(e.target.value)}>
+                                        <option>Select currency</option>
                                         {props.selectableData.currencies.map((item)=>{
                                             return (<option>{item.currency}</option>)
                                         })}
@@ -78,6 +79,7 @@ export default function AddCityModal(props) {
                             <Row>
                                 <Col className="mt-4">
                                     <Form.Control as="select" value={timeZone} onChange={(e)=>setTimeZone(e.target.value)}>
+                                        <option>Select time zone</option>
                                         {props.selectableData.timeZones.map((item)=>{
                                             return (<option>{item.timeZone}</option>)
                                         })}
@@ -87,6 +89,7 @@ export default function AddCityModal(props) {
                             <Row>
                                 <Col className="mt-4">
                                     <Form.Control as="select" value={country} onChange={(e)=>setCountry(e.target.value)}>
+                                        <option>Select country</option>
                                         {props.selectableData.countries.map((item)=>{
                                             return (<option value={item.numericCode}>{item.country}</option>)
                                         })}

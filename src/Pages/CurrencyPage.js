@@ -4,6 +4,7 @@ import API from "../Networking/API";
 import CustomLoader from "../Components/CustomLoader";
 import UpdateCurrencyModal from "../Components/UpdateCurrencyModal";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 
 export default function CurrencyPage() {
 
@@ -12,8 +13,8 @@ export default function CurrencyPage() {
     const [showLoader, setShowLoader] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    const [showStatus, setShowStatus] = useState(false);
-    const [snackbarConfig, setSnackbarConfig] = useState({isSuccessful: false});
+    const { addConfig } = UseSnackbarContext();
+
     const [isQueryActive, setQueryActive] = useState(false);
 
 
@@ -96,12 +97,6 @@ export default function CurrencyPage() {
                 }}
             />
 
-            <SnackbarFeedback
-                show={showStatus}
-                setShow={setShowStatus}
-                snackbarConfig={snackbarConfig}
-            />
-
             {isQueryActive ? <CustomLoader/> : null}
 
         </div>
@@ -110,8 +105,7 @@ export default function CurrencyPage() {
 
 
     function responseFeedback(success){
-        setSnackbarConfig({isSuccessful: success})
-        setShowStatus(true);
+        addConfig(success)
         setQueryActive(false)
     }
 }

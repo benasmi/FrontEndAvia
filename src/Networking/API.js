@@ -35,17 +35,17 @@ const deleteCities = (data) => RequestType.postRequest("/city/delete", data);
 const CityAPI = {getCities, insertCities, updateCities,deleteCities};
 
 //TimeZones
-const getTimeZones = () => RequestType.getRequest("/timezone/all")
+const getTimeZones = () => RequestType.getRequest("/timezone/all");
 const updateTimeZones = (data) => RequestType.postRequest("/timezone/update", data);
 const deleteTimeZones = (data) => RequestType.postRequest("/timezone/delete", data);
 
 const TimeZoneAPI = {getTimeZones, updateTimeZones,deleteTimeZones};
 
 //Suggestions
-const getSuggestions = () => RequestType.getRequest("/suggestion/all")
+const getSuggestions = () => RequestType.getRequest("/suggestion/all");
 const updateSuggestion = (data) => RequestType.postRequest("/suggestion/update", data);
 const deleteSuggestion = (data) => RequestType.postRequest("/suggestion/delete", data);
-const SuggestionAPI = {getSuggestions,updateSuggestion,deleteSuggestion}
+const SuggestionAPI = {getSuggestions,updateSuggestion,deleteSuggestion};
 
 //Stats
 const getFlightStats = (data) => RequestType.postRequest("/stats/flights",data);
