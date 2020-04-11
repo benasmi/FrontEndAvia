@@ -4,8 +4,9 @@ import RequestType from '../Networking/NetworkLayerCentral'
 const getUsers = () => RequestType.getRequest("/users/all");
 const insertUsers = (data) => RequestType.postRequest("/users/insert", data);
 const updateUsers = (data) => RequestType.postRequest("/users/update", data);
+const updateUsersWithCards = (data) => RequestType.postRequest("/users/updatewithcards", data);
 const removeUsers = (data) => RequestType.postRequest("/users/delete", data);
-const UsersAPI = {getUsers, insertUsers, updateUsers, removeUsers};
+const UsersAPI = {getUsers, insertUsers, updateUsers, removeUsers, updateUsersWithCards};
 
 //CardsProviders
 const getCardsProviders = () => RequestType.getRequest("/cardprovider/all");
@@ -19,7 +20,9 @@ const CountryAPI ={getCountries, updateCountry, deleteCountry};
 
 //Cards
 const insertCardsWithUser = (data) => RequestType.postRequest("/cards/insert", data);
-const CardsAPI ={insertCardsWithUser};
+const getAllCards = () => RequestType.getRequest("/cards/all");
+const removeCard = (data) => RequestType.postRequest("/cards/remove",data);
+const CardsAPI ={insertCardsWithUser, getAllCards, removeCard};
 
 //Currency
 const getCurencies = () => RequestType.getRequest("/currency/all");
@@ -32,7 +35,8 @@ const getCities = () => RequestType.getRequest("/city/all");
 const insertCities = (data) => RequestType.postRequest("/city/insert", data);
 const updateCities = (data) => RequestType.postRequest("/city/update", data);
 const deleteCities = (data) => RequestType.postRequest("/city/delete", data);
-const CityAPI = {getCities, insertCities, updateCities,deleteCities};
+const insertCityWithSugs = (data) => RequestType.postRequest("/city/citywithsugs", data);
+const CityAPI = {getCities, insertCities, updateCities,deleteCities, insertCityWithSugs};
 
 //TimeZones
 const getTimeZones = () => RequestType.getRequest("/timezone/all");

@@ -57,20 +57,18 @@ export default function CountryPage() {
     }
 
     function updateCountry(updatedRow){
-        addAlertConfig("Update row", "Do you really want to update this row?", function () {
-            setQueryActive(true)
-            API.CountryAPI.updateCountry(updatedRow).then(response=>{
-                const tempData = data.slice();
-                tempData.map((item,idx)=>{if(item.numericCode === updatedRow.numericCode){
-                    tempData[idx] = updatedRow
-                }});
-                setData(tempData);
-                responseFeedback(true)
-                setShowModal(false)
-            }).catch(error=>{
-                responseFeedback(false)
-            });
-        })
+        setQueryActive(true)
+        API.CountryAPI.updateCountry(updatedRow).then(response=>{
+            const tempData = data.slice();
+            tempData.map((item,idx)=>{if(item.numericCode === updatedRow.numericCode){
+                tempData[idx] = updatedRow
+            }});
+            setData(tempData);
+            responseFeedback(true)
+            setShowModal(false)
+        }).catch(error=>{
+            responseFeedback(false)
+        });
     }
 
     function UpdateRow(row) {

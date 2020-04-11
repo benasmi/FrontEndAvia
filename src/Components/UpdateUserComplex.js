@@ -1,52 +1,71 @@
 import React, {useState} from "react";
 import '../Styles/userspage.css'
 import {Modal, Button, Form, Row, Col} from "react-bootstrap"
-import {ReactComponent as Add} from '../Images/add.svg'
-import {ReactComponent as Close} from '../Images/close.svg'
+import API from "../Networking/API";
 import {ReactComponent as Back} from '../Images/arrowBack.svg'
 import {CloseButton} from "react-bootstrap";
+import UseSnackbarContext from "../Contexts/UseSnackbarContext";
+import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
 
-export default function AddUserComplex(props){
-    const [data, setData] = useState([{user: {name: "", surname: "", email: "", birthday: "", gender: "", password: "", fk_country: ""}, cards: [{cardNumber:"", csv: "", expYear: "", expMonth: "", fk_cardProvider: 0}]}]);
 
+
+var dataRows = []
+
+export default function UpdateUserComplex(props){
+    const [data, setData] = useState(props.data);
+    const { addConfig } = UseSnackbarContext();
+    const { addAlertConfig } = UseAlertDialogContext();
 
     function submitForm() {
-        return data
-    }
-
-    function addCreditCard(row){
-        const vals = [...data];
-        vals[row].cards.push({cardNumber:"", csv: "", expYear: "", expMonth: "", fk_cardProvider: 0});
-        setData(vals);
+            return prepareUpdatedRows()
     }
 
     function removeCreditCard(row, col){
-        const vals = [...data];
-        vals[row].cards.splice(col, 1);
-        setData(vals)
+        addAlertConfig("Remove","Do you want to remove credit card for this user?", function () {
+            removeCreditCardFromDB(row,col)
+        });
     }
 
-    function addUser(){
+    function removeCreditCardFromDB(row, col){
         const vals = [...data];
-        vals.push({user: {name: "", surname: "", email: "", birthday: "", gender: "", password: "", fk_country: ""}, cards: [{cardNumber:"", csv: "", expYear: "", expMonth: "", fk_cardProvider: 0}]});
-        setData(vals)
-    }
-
-    function removeUser(row){
-        const vals = [...data];
-        vals.splice(row,1);
-        setData(vals)
+        var card = vals[row].cards[col]
+        API.CardsAPI.removeCard(card).then(response=>{
+            vals[row].cards.splice(col, 1);
+            setData(vals)
+            addConfig(true)
+        }).catch(error=>{
+            addConfig(false)
+        })
     }
 
     function handleChanges(e, row, col=0){
         const vals = [...data];
         const {name, value} = e.target;
         vals[row].user[name] = value;
-        vals[row].cards[col][name] = value;
+        if(vals[row].cards.length !== 0 ){
+            vals[row].cards[col][name] = value;
+        }
         setData(vals)
+
+        if(!rowExists(row)){
+            dataRows.push(row)
+        }
     }
 
+    function rowExists(row){
+        for(let i = 0; i<dataRows.length; i++){
+            if(dataRows[i] === row) return true
+        }
+        return false
+    }
 
+    function prepareUpdatedRows() {
+        let tempo = []
+        dataRows.map((row)=>{
+            tempo.push(data[row])
+        })
+        return tempo
+    }
 
 
     return(
@@ -61,7 +80,6 @@ export default function AddUserComplex(props){
                     return <div className="w-50 mt-5 p-3 border rounded">
                         <div className="w-100 d-flex justify-content-between">
                             <h4>User details</h4>
-                            <Close style={{width:"16px", height:"16px"}} onClick={e=>{removeUser(idx)}} />
                         </div>
                         <Row>
                             <Col>
@@ -73,7 +91,7 @@ export default function AddUserComplex(props){
                         </Row>
                         <Row>
                             <Col className="mt-4">
-                                <Form.Control placeholder="Email" name="email" value={data.user.email} onChange={e=>handleChanges(e,idx,)}/>
+                                <Form.Control disabled placeholder="Email" name="email" value={data.user.email} onChange={e=>handleChanges(e,idx,)}/>
                             </Col>
                         </Row>
                         <Row>
@@ -115,7 +133,7 @@ export default function AddUserComplex(props){
                                     </div>
                                     <Row>
                                         <Col>
-                                            <Form.Control value={dataRow.cardNumber} name="cardNumber" placeholder="Card number" onChange={e=>handleChanges(e,idx,cardIdx)}/>
+                                            <Form.Control disabled value={dataRow.cardNumber} name="cardNumber" placeholder="Card number" onChange={e=>handleChanges(e,idx,cardIdx)}/>
                                         </Col>
                                     </Row>
                                     <Row className="mt-4">
@@ -142,27 +160,20 @@ export default function AddUserComplex(props){
                                 </div>
                             )
                         })}
-                        <div className="w-100 d-flex justify-content-end">
-                            <Add style={{width:"32px", height:"32px"}} onClick={e=>{addCreditCard(idx)}} />
-                        </div>
-
                     </div>
                 })}
 
                 <div className="w-50 mt-3 d-flex justify-content-end">
-                    <Button variant="primary" onClick={e=>props.submitComplexUserForm(submitForm())}>Submit</Button>
-                    <Button className="ml-4" variant="success" onClick={e=>{addUser()}}>Add user</Button>
+                    <Button variant="primary" onClick={e=>{
+                        addAlertConfig("Update", "Do you want to make these changes?", function () {
+                            props.updateComplexUserForm(submitForm())
+                        })
+                    }}>Update</Button>
                 </div>
                 <div className="w-100 mb-5 d-flex justify-content-start"/>
-                </div>
+            </div>
 
         </div>
 
     )
 }
-
-/*
-
-
-
- */

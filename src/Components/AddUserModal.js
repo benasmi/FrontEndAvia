@@ -4,8 +4,6 @@ import '../Styles/popup.css'
 import '../Styles/usercomponent.css'
 import UserComponent from "./UserComponent";
 
-let users = []
-
 export default function AddUserModal(props) {
 
     const [name, setName] = useState("");

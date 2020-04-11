@@ -4,7 +4,6 @@ import '../Styles/popup.css'
 import '../Styles/usercomponent.css'
 import UserComponent from "./UserComponent";
 
-let citiesTemp = [];
 
 export default function AddCityModal(props) {
 
@@ -16,13 +15,13 @@ export default function AddCityModal(props) {
     const [cities, setCities] = useState([])
 
     function addCity(){
-        citiesTemp.push({"cityName": city, "averageTemperature": temperature, "fk_currency": currency, "fk_timeZone": timeZone, "fk_countryCode": country})
+        cities.push({"cityName": city, "averageTemperature": temperature, "fk_currency": currency, "fk_timeZone": timeZone, "fk_countryCode": country})
         setCity("")
         setTemperature("")
         setCurrency("")
         setTimeZone("")
         setCountry("")
-        setCities(citiesTemp)
+        setCities(cities)
     }
 
     function renderUsers(){
@@ -112,8 +111,8 @@ export default function AddCityModal(props) {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="success" onClick={(e)=>{
+                    console.log(cities)
                     props.addAllUsers(cities);
-                    setCities([]);
                 }}>Submit</Button>
                 <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>

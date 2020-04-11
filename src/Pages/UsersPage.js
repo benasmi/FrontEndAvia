@@ -8,12 +8,15 @@ import CustomLoader from "../Components/CustomLoader";
 import API from "../Networking/API";
 import UseSnackbarContext from "../Contexts/UseSnackbarContext";
 import UseAlertDialogContext from "../Contexts/UseAlertDialogContext";
+import UpdateUserComplex from "../Components/UpdateUserComplex";
 
 export default function UserPage() {
     //Data hooks
     const [data, setData] = useState([]);
     const [countryData, setCountryData] = useState([]);
     const [cardsProviderData, setCardsProviderData] = useState([]);
+    const [cardsData, setCardsData] = useState([]);
+
     const [updatedRows, setUpdatedRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -29,6 +32,7 @@ export default function UserPage() {
 
     //Forms manipulation
     const [complexFormEnabled, setComplexFormEnabled] = useState(false);
+    const [complexFormUpdateEnabled, setComplexFormUpdateEnabled] = useState(false);
 
 
 
@@ -51,7 +55,39 @@ export default function UserPage() {
         insertUsersWithCards(data)
     }
 
+    function preparedSelectedUsers(){
+        let tempo = [];
+        selectedRows.map((data, idx) => {
+            var test = cardsData[data.data.email];
+            tempo.push({user: data.data, cards: []});
+
+            if(test !== undefined){
+                test.map(card=>{
+                    tempo[idx].cards.push(card)
+                })
+            }
+        });
+        return tempo
+    }
+
+
+    function updateComplexUserForm(data) {
+        setQueryActive(true)
+        API.UsersAPI.updateUsersWithCards(data).then(response=>{
+            API.UsersAPI.getUsers().then(response=>{
+                setSelectedRows([])
+                responseFeedback(true)
+                setComplexFormUpdateEnabled(false)
+            }).catch(error=>{
+                responseFeedback(false)
+            })
+        }).catch(error=>{
+            responseFeedback(false)
+        });
+    }
+
     return(
+
         <div className="content">
             {showLoader ?
                 <CustomLoader/> :
@@ -60,7 +96,12 @@ export default function UserPage() {
                     submitComplexUserForm={submitComplexUserForm}
                     selectableData={{countries: countryData, cardsProviderData: cardsProviderData}}
                     />
-                    : <div className="content">
+                    : complexFormUpdateEnabled ? <UpdateUserComplex
+                        closeComplexForm={e=>{setComplexFormUpdateEnabled(false)}}
+                        updateComplexUserForm={updateComplexUserForm}
+                        selectableData={{countries: countryData, cardsProviderData: cardsProviderData}}
+                        data={preparedSelectedUsers()}
+                    /> : <div className="content">
                         <h1 className="mt-5">Users(PN2)</h1>
                         <TableComponent
                             header={headers}
@@ -72,15 +113,20 @@ export default function UserPage() {
                         />
                         <div className="w-75 d-flex justify-content-end ">
                             <ButtonToolbar className="mt-5">
-                                <Button className="ml-0" variant="success" onClick={()=>{
-                                    setShowAddPopUp(true)}}>Add users</Button>
+
+                                {/*<Button className="ml-0" variant="success" onClick={()=>{
+                                    setShowAddPopUp(true)}}>Add users</Button>*/}
 
                                 <Button className="ml-4" variant="success" onClick={()=>{
-                                    setComplexFormEnabled(true)}}>Advanced</Button>
+                                    setComplexFormEnabled(true)}}>Add users</Button>
 
                                 <Button className="ml-4" variant="primary" onClick={()=>{
                                     updateUsers()
                                 }}>Update</Button>
+
+                                <Button className="ml-2" variant="primary" onClick={()=>{
+                                    setComplexFormUpdateEnabled(true)
+                                }}>Advanced Update</Button>
 
                                 <Button className="ml-2" variant="danger" onClick={()=>{
                                     removeUsers()
@@ -106,12 +152,18 @@ export default function UserPage() {
     function insertUsersWithCards(cardsUserData){
         setQueryActive(true)
         API.CardsAPI.insertCardsWithUser(cardsUserData).then(response=>{
-            setData(oldArray=> [...oldArray, cardsUserData.user])
-            setComplexFormEnabled(false)
+            addUsersLocally(cardsUserData);
+            setComplexFormEnabled(false);
             responseFeedback(true)
         }).catch(error=>{
             responseFeedback(false)
         });
+    }
+
+    function addUsersLocally(data) {
+        data.map(item =>{
+            setData(oldArray=> [...oldArray, item.user])
+        })
     }
 
     function fetchCountries(){
@@ -126,11 +178,24 @@ export default function UserPage() {
     function fetchCardProvider(){
         API.CardsProviderAPI.getCardsProviders().then(response=>{
            setCardsProviderData(response);
-            setShowLoader(false)
+           fetchCards()
         }).catch(error=>{
             setShowLoader(false)
         });
     }
+
+
+    function fetchCards(){
+        API.CardsAPI.getAllCards().then(response=>{
+            setCardsData(response);
+            setShowLoader(false)
+        }).catch(error=>{
+            setShowLoader(false)
+        })
+    }
+
+
+
 
     function insertUsers(users){
         setQueryActive(true);
@@ -164,6 +229,11 @@ export default function UserPage() {
             });
         });
     }
+
+    function updateAdvanced(){
+
+    }
+
 
     function removeUsers() {
         addAlertConfig("Remove users", "Do you really want to remove selected users? Other rows who have this row as a foreign key will also be affected and deleted!", function(){

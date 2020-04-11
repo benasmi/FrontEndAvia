@@ -26,6 +26,7 @@ export default function CityPage() {
     //Feedback hooks
     const [showLoader, setShowLoader] = useState(true);
     const [isQueryActive, setQueryActive] = useState(false);
+    const [complexFormEnabled, setComplexFormEnabled] = useState(false);
 
     const { addConfig } = UseSnackbarContext();
     const { addAlertConfig } = UseAlertDialogContext()
