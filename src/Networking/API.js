@@ -21,8 +21,10 @@ const CountryAPI ={getCountries, updateCountry, deleteCountry};
 //Cards
 const insertCardsWithUser = (data) => RequestType.postRequest("/cards/insert", data);
 const getAllCards = () => RequestType.getRequest("/cards/all");
+const getCardsByUser = (data) =>RequestType.postRequest("cards/usercards",data);
 const removeCard = (data) => RequestType.postRequest("/cards/remove",data);
-const CardsAPI ={insertCardsWithUser, getAllCards, removeCard};
+const getCardsByReservation = (data) => RequestType.postRequest("/cards/byreservation",data);
+const CardsAPI ={insertCardsWithUser, getAllCards, removeCard, getCardsByReservation, getCardsByUser};
 
 //Currency
 const getCurencies = () => RequestType.getRequest("/currency/all");
@@ -55,7 +57,11 @@ const SuggestionAPI = {getSuggestions,updateSuggestion,deleteSuggestion};
 const getFlightStats = (data) => RequestType.postRequest("/stats/flights",data);
 const StatsAPI = {getFlightStats};
 
-const API = {UsersAPI, CardsProviderAPI, CountryAPI, CardsAPI, CurrencyAPI, CityAPI, TimeZoneAPI, SuggestionAPI, StatsAPI};
+//Payments
+const getPaymentsByReservation = (data) => RequestType.postRequest("/payments/byreservation", data);
+const PaymentsAPI = {getPaymentsByReservation};
+
+const API = {UsersAPI, CardsProviderAPI, CountryAPI, CardsAPI, CurrencyAPI, CityAPI, TimeZoneAPI, SuggestionAPI, StatsAPI, PaymentsAPI};
 
 export default API
 

@@ -96,12 +96,12 @@ export default function UpdateUserComplex(props){
                         </Row>
                         <Row>
                             <Col className="mt-4">
-                                <Form.Control placeholder="Password" name="password" value={data.user.password} onChange={e=>handleChanges(e,idx,)}/>
+                                <Form.Control type="password" disabled placeholder="Password" name="password" value={data.user.password} onChange={e=>handleChanges(e,idx,)}/>
                             </Col>
                         </Row>
                         <Row>
                             <Col className="mt-4">
-                                <Form.Control placeholder="Birthday" name="birthday" value={data.user.birthday} onChange={e=>handleChanges(e,idx)}/>
+                                <Form.Control type="date" placeholder="Birthday" name="birthday" value={data.user.birthday} onChange={e=>handleChanges(e,idx)}/>
                             </Col>
                         </Row>
                         <Row>
@@ -138,13 +138,13 @@ export default function UpdateUserComplex(props){
                                     </Row>
                                     <Row className="mt-4">
                                         <Col>
-                                            <Form.Control value={dataRow.csv} name="csv" placeholder="CSV"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
+                                            <Form.Control maxlength="3" value={dataRow.csv} name="csv" placeholder="CSV"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
                                         </Col>
                                         <Col>
-                                            <Form.Control value={dataRow.expYear} name="expYear" placeholder="Exp. Year"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
+                                            <Form.Control maxlength="4" value={dataRow.expYear} name="expYear" placeholder="Exp. Year"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
                                         </Col>
                                         <Col>
-                                            <Form.Control value={dataRow.expMonth} name="expMonth" placeholder="Exp. Month"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
+                                            <Form.Control maxlength="2" value={dataRow.expMonth} name="expMonth" placeholder="Exp. Month"  onChange={e=>handleChanges(e,idx,cardIdx)}/>
                                         </Col>
                                     </Row>
                                     <Row>

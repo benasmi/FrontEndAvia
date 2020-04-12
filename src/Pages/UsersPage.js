@@ -230,10 +230,6 @@ export default function UserPage() {
         });
     }
 
-    function updateAdvanced(){
-
-    }
-
 
     function removeUsers() {
         addAlertConfig("Remove users", "Do you really want to remove selected users? Other rows who have this row as a foreign key will also be affected and deleted!", function(){

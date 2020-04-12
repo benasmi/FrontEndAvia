@@ -70,6 +70,10 @@ export default function TableComponent(props) {
                     <Button className="mr-2" variant="primary" onClick={e=>{props.UpdateRow(props.data[index])}}>Update</Button>
                     <Button variant="danger" onClick={e=>{props.DeleteRow(props.data[index])}}>Delete</Button>
                 </td>
+            }else if(key.key==="moreInfo"){
+                return <td>
+                    <Button variant="info" onClick={e=>{props.moreInfo(props.data[index])}}>Info</Button>
+                </td>
             }else{
                 if(key.editable){
                     return <td><input

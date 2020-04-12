@@ -8,15 +8,17 @@ import TableComponent from "../Components/TableComponent";
 import SnackbarFeedback from "../Components/SnackbarFeedback";
 import CustomLoader from "../Components/CustomLoader";
 import UseSnackbarContext from "../Contexts/UseSnackbarContext";
+import StatisticsMoreInfo from "../Components/StatisticsMoreInfo";
 
 require('react-datepicker/dist/react-datepicker.css')
 
 export default function StatisticsPage(){
-    const [reqBody, setReqBody] = useState({hourStartBound: "0", hourEndBound: "3", startDate:"2020-02-02", stopDate: "2020-03-03"});
+    const [reqBody, setReqBody] = useState({hourStartBound: "4", hourEndBound: "6", startDate:"2020-02-02", stopDate: "2020-03-03"});
     const [resBody, setResBody] = useState([]);
+    const [showMoreInfo, setShowMoreInfo] = useState(false);
+    const [moreData, setMoreData] = useState([])
 
     const [isQueryActive, setQueryActive] = useState(false);
-
     const { addConfig } = UseSnackbarContext();
 
 
@@ -35,6 +37,7 @@ export default function StatisticsPage(){
         {key:"totalPaymentPerReservation", display: "PC/Res", editable:false, selectable: false},
         {key:"totalPaymentSumPerReservation", display: "PS/Res", editable:false, selectable: false},
         {key:"totalDifCardsUsedPerReservation", display: "CU/Res", editable:false, selectable: false},
+        {key:"moreInfo", display:"Info",editable:false,selectable: false}
     ];
 
     function formStats(){
@@ -49,6 +52,28 @@ export default function StatisticsPage(){
         }).catch(error=>{
             responseFeedback(false)
         })
+    }
+
+    /*
+    { flightNumber: "FR7621", fullName: "Leory Rojas", email: "leory.rojas@gmail.com", hourDuration: 5, minuteDuration: 0, reservationId: "40", totalDifCardsPerUser: 2, totalPaymentPerReservation: 4, totalPaymentSumPerReservation: 158, totalDifCardsUsedPerReservation: 2 }
+     */
+    async function moreInfo(data) {
+        Promise.all([
+            getUserCards(data.email),
+            getAllPaymentsByReservation({reservationId: data.reservationId}),
+            getAllCardsForReservation({reservationId: data.reservationId})
+        ])
+            .then(function (responses) {
+                setMoreData(responses)
+            }).then(function (data) {
+                setShowMoreInfo(true)
+            // You would do something with both sets of data here
+            console.log(data);
+        }).catch(function (error) {
+            // if there's an error, log it
+            console.log(error);
+        });
+
     }
 
     return(
@@ -89,6 +114,7 @@ export default function StatisticsPage(){
                                     <TableComponent
                                         header={headers}
                                         data={data.reservations}
+                                        moreInfo={moreInfo}
                                         size="sm"
                                     />
                                     <div className="w-75 d-flex justify-content-end">
@@ -103,8 +129,40 @@ export default function StatisticsPage(){
             }
             {isQueryActive ? <CustomLoader/> : null}
 
+            {showMoreInfo ? <StatisticsMoreInfo
+                data={setMoreData}
+                onHide={e=>{
+                    setShowMoreInfo(false)
+                }}
+            /> : null}
+
         </div>
-    )
+    );
+
+     function getUserCards(data){
+        return API.CardsAPI.getCardsByUser(data).then(response=>{
+            return ({cards: response})
+        }).catch(error=>{
+            responseFeedback(false)
+        })
+    }
+
+     function getAllPaymentsByReservation(id){
+         return API.PaymentsAPI.getPaymentsByReservation(id).then(response=>{
+            return ({payments: response})
+        }).catch(error=>{
+            responseFeedback(false)
+        })
+    }
+
+     function getAllCardsForReservation(id){
+       return  API.CardsAPI.getCardsByReservation(id).then(response=>{
+            return ({cardsInReservation: response})
+        }).catch(error=>{
+            responseFeedback(false)
+        })
+    }
+
 
     function responseFeedback(success){
         addConfig(success)
