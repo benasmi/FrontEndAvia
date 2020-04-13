@@ -14,6 +14,17 @@ export default function StatisticsMoreInfo(props){
         {key:"fk_reservationId", display: "Reservation Id", editable:false, selectable: false}
     ];
 
+    //{cardNumber:"", csv: "", expYear: "", expMonth: "", fk_cardProvider: 0}
+    const cardHeader = [
+        {key:"csv", display: "Csv", editable:false, selectable: false},
+        {key:"expYear", display: "Exp.Year", editable:false, selectable: false},
+        {key:"expMonth", display: "Exp.Month", editable:false, selectable: false},
+        {key:"cardNumber", display: "Card Number", editable:false, selectable: false},
+        {key:"fk_cardProvider", display: "Card provider", editable:false, selectable: false}
+    ];
+
+
+
     return(
         <Modal
             {...props}
@@ -26,23 +37,23 @@ export default function StatisticsMoreInfo(props){
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="d-flex  flex-column w-100 ">
-                    Payments
+                <div className="d-flex justify-content-center align-items-center flex-column w-100 ">
+                    <div className="w-75 d-flex align-items-start"><Form.Label>Payments</Form.Label></div>
                     <TableComponent
                         header={paymentHeaders}
                         data={props.data.payments}
                         size="sm"
                     />
-                    Different credit cards used for reservation
+                    <div className="w-75 d-flex align-items-start"><Form.Label>Different credit cards used for reservation</Form.Label></div>
                     <TableComponent
-                        header={paymentHeaders}
-                        data={props.data.payments}
+                        header={cardHeader}
+                        data={props.data.cardsInReservation}
                         size="sm"
                     />
-                    All credit cards owned by the user
+                    <div className="w-75 d-flex align-items-start"><Form.Label> All credit cards owned by the user</Form.Label></div>
                     <TableComponent
-                        header={paymentHeaders}
-                        data={props.data.payments}
+                        header={cardHeader}
+                        data={props.data.cards}
                         size="sm"
                     />
                 </div>

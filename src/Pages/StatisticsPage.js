@@ -16,7 +16,7 @@ export default function StatisticsPage(){
     const [reqBody, setReqBody] = useState({hourStartBound: "4", hourEndBound: "6", startDate:"2020-02-02", stopDate: "2020-03-03"});
     const [resBody, setResBody] = useState([]);
     const [showMoreInfo, setShowMoreInfo] = useState(false);
-    const [moreData, setMoreData] = useState([])
+    const [moreData, setMoreData] = useState({});
 
     const [isQueryActive, setQueryActive] = useState(false);
     const { addConfig } = UseSnackbarContext();
@@ -57,18 +57,19 @@ export default function StatisticsPage(){
     /*
     { flightNumber: "FR7621", fullName: "Leory Rojas", email: "leory.rojas@gmail.com", hourDuration: 5, minuteDuration: 0, reservationId: "40", totalDifCardsPerUser: 2, totalPaymentPerReservation: 4, totalPaymentSumPerReservation: 158, totalDifCardsUsedPerReservation: 2 }
      */
-    async function moreInfo(data) {
+    function moreInfo(data) {
         Promise.all([
             getUserCards(data.email),
             getAllPaymentsByReservation({reservationId: data.reservationId}),
             getAllCardsForReservation({reservationId: data.reservationId})
         ])
             .then(function (responses) {
-                setMoreData(responses)
+                let c = responses[0].cards;
+                let p = responses[1].payments;
+                let cr = responses[2].cardsInReservation;
+                setMoreData({cards: c, payments: p, cardsInReservation: cr});
             }).then(function (data) {
                 setShowMoreInfo(true)
-            // You would do something with both sets of data here
-            console.log(data);
         }).catch(function (error) {
             // if there's an error, log it
             console.log(error);
@@ -84,15 +85,19 @@ export default function StatisticsPage(){
             <div className="mt-5 d-flex flex-column w-50 justify-content-center align-content-center">
                 <Row>
                     <Col>
+                        <Form.Label>From hour</Form.Label>
                         <Form.Control placeholder="From Hour" name="hourStartBound" onChange={handleChange}/>
                     </Col>
                     <Col >
+                        <Form.Label>To hour</Form.Label>
                         <Form.Control placeholder="To Hour" name="hourEndBound" onChange={handleChange} />
                     </Col>
                     <Col>
+                        <Form.Label>Start date</Form.Label>
                         <Form.Control type="date"  placeholder="From Hour" name="startDate" onChange={handleChange}/>
                     </Col>
                     <Col >
+                        <Form.Label>End date</Form.Label>
                         <Form.Control type="date" placeholder="To Hour" name="stopDate" onChange={handleChange} />
                     </Col>
                 </Row>
@@ -130,7 +135,8 @@ export default function StatisticsPage(){
             {isQueryActive ? <CustomLoader/> : null}
 
             {showMoreInfo ? <StatisticsMoreInfo
-                data={setMoreData}
+                show={showMoreInfo}
+                data={moreData}
                 onHide={e=>{
                     setShowMoreInfo(false)
                 }}
