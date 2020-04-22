@@ -14,7 +14,6 @@ export default function StatisticsMoreInfo(props){
         {key:"fk_reservationId", display: "Reservation Id", editable:false, selectable: false}
     ];
 
-    //{cardNumber:"", csv: "", expYear: "", expMonth: "", fk_cardProvider: 0}
     const cardHeader = [
         {key:"csv", display: "Csv", editable:false, selectable: false},
         {key:"expYear", display: "Exp.Year", editable:false, selectable: false},
@@ -22,6 +21,7 @@ export default function StatisticsMoreInfo(props){
         {key:"cardNumber", display: "Card Number", editable:false, selectable: false},
         {key:"fk_cardProvider", display: "Card provider", editable:false, selectable: false}
     ];
+
 
 
 

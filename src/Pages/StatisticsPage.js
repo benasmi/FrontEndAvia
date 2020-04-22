@@ -13,7 +13,7 @@ import StatisticsMoreInfo from "../Components/StatisticsMoreInfo";
 require('react-datepicker/dist/react-datepicker.css')
 
 export default function StatisticsPage(){
-    const [reqBody, setReqBody] = useState({hourStartBound: "4", hourEndBound: "6", startDate:"2020-02-02", stopDate: "2020-03-03"});
+    const [reqBody, setReqBody] = useState({hourStartBound: "4", hourEndBound: "6", startDate:"2020-02-02", stopDate: "2020-03-03", showPayments: true});
     const [resBody, setResBody] = useState([]);
     const [showMoreInfo, setShowMoreInfo] = useState(false);
     const [moreData, setMoreData] = useState({});
@@ -23,9 +23,9 @@ export default function StatisticsPage(){
 
 
     function handleChange(e) {
-        const {name, value} = e.target
+        const {name, value, type, checked} = e.target;
         let body = Object.assign({}, reqBody);
-        body[name] = value
+        body[name] = type==="checkbox" ? checked : value;
         setReqBody(body)
     }
 
@@ -40,6 +40,15 @@ export default function StatisticsPage(){
         {key:"moreInfo", display:"Info",editable:false,selectable: false}
     ];
 
+    const paymentHeaders = [
+        {key:"paymentId", display: "Id", editable:false, selectable: false},
+        {key:"paymentAmount", display: "Amount", editable:false, selectable: false},
+        {key:"paymentDate", display: "Date", editable:false, selectable: false},
+        {key:"fk_cardNumber", display: "Card", editable:false, selectable: false},
+        {key:"fk_currency", display: "Currency", editable:false, selectable: false},
+        {key:"fk_reservationId", display: "Reservation Id", editable:false, selectable: false}
+    ];
+
     function formStats(){
         setQueryActive(true)
         API.StatsAPI.getFlightStats(reqBody).then(response=>{
@@ -47,6 +56,7 @@ export default function StatisticsPage(){
             for (const key of Object.keys(response)){
                 obj.push({flightNumber: key, reservations: response[key]})
             }
+            console.log(obj);
             setResBody(obj);
             responseFeedback(true)
         }).catch(error=>{
@@ -82,7 +92,7 @@ export default function StatisticsPage(){
             <h1 className="mt-5">Flights statistics page(L3)</h1>
             <h4 className="mt-2">Form statistics using duration and dates bound</h4>
 
-            <div className="mt-5 d-flex flex-column w-50 justify-content-center align-content-center">
+            <div className="mt-5 d-flex  flex-column w-50 justify-content-center align-content-center">
                 <Row>
                     <Col>
                         <Form.Label>From hour</Form.Label>
@@ -100,6 +110,9 @@ export default function StatisticsPage(){
                         <Form.Label>End date</Form.Label>
                         <Form.Control type="date" placeholder="To Hour" name="stopDate" onChange={handleChange} />
                     </Col>
+                    <Col className="align-self-end">
+                        <Form.Check  name="showPayments" type="checkbox" label="Show payments" onChange={handleChange} />
+                    </Col>
                 </Row>
             </div>
 
@@ -112,19 +125,37 @@ export default function StatisticsPage(){
                     <div className=" w-75 mt-4 d-flex flex-column align-items-center">
                         {
                             resBody.map((data=>{
+                                console.log(resBody);
                                 return <div className="mt-4 border p-3 border-top w-75 d-flex flex-column d-flex align-items-center">
                                     <div className="w-100  d-flex align-items-start">
                                         <h3>Flight id - {data.flightNumber}</h3>
                                     </div>
-                                    <TableComponent
-                                        header={headers}
-                                        data={data.reservations}
-                                        moreInfo={moreInfo}
-                                        size="sm"
-                                    />
-                                    <div className="w-75 d-flex justify-content-end">
-                                        <p>Reservations in flight: {data.reservations.length}</p>
+                                    {data.reservations.map(dataRow=>{
+                                        return <div className="w-100 border p-3 mt-3 d-flex flex-column align-items-center">
+                                            <TableComponent
+                                                header={headers}
+                                                overflow={false}
+                                                data={[dataRow]}
+                                                moreInfo={moreInfo}
+                                            />
+                                            {(dataRow.payments !== null) ? <TableComponent
+                                                    overflow={false}
+                                                    header={paymentHeaders}
+                                                    data={dataRow.payments}
+                                                    size="sm"
+                                                />: null}
+
+                                            {dataRow.payments !== null ? <h4>Total payment sum: {totalPaymentSum(dataRow.payments)}</h4> : null}
+
+                                            </div>
+
+
+                                    })}
+
+                                    <div className="w-75 mt-5 d-flex justify-content-end">
+                                        <h3>Reservations in flight: {data.reservations.length}</h3>
                                     </div>
+                                    
                                 </div>
                             }))
                         }
@@ -151,6 +182,25 @@ export default function StatisticsPage(){
         }).catch(error=>{
             responseFeedback(false)
         })
+    }
+
+    function totalPaymentSum(data){
+        var sum = 0;
+        data.map(dataRow=>{
+            sum+=dataRow.paymentAmount;
+        });
+        return sum;
+    }
+
+    function totalPaymentFlight(){
+         var sum = 0;
+
+         resBody.map(dataRow=>{
+             dataRow.reservations.map(reserv=>{
+                sum+=totalPaymentSum(reserv.payments)
+             })
+         })
+        return sum;
     }
 
      function getAllPaymentsByReservation(id){

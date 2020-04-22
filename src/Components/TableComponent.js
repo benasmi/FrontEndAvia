@@ -50,8 +50,8 @@ export default function TableComponent(props) {
 
 
 
-    const renderTableHeader = () =>{
-        return props.header.map((key, index) => {
+    const renderTableHeader = (header) =>{
+        return header.map((key, index) => {
             return <th key={index}>{key.display !== undefined ? key.display.toUpperCase() : key.key.toUpperCase()}</th>
         })
     };
@@ -102,6 +102,7 @@ export default function TableComponent(props) {
     };
 
     const renderTableData = () => {
+        console.log(props);
         return props.data.map((row,index) => {
             return(
                 <tr key={index}>
@@ -110,13 +111,15 @@ export default function TableComponent(props) {
             )
         })
     };
+    const overflowStyle = {overflowY:"scroll", maxHeight: "70%",background: "white",width: "80%"};
+    const notOverFlowStyle = {maxHeight: "70%",background: "white",width: "80%"};
 
     return(
-        <div style={{overflowY:"scroll", maxHeight: "70%",background: "white",width: "80%"}}>
+        <div style={(props.overflow === undefined) ? overflowStyle : notOverFlowStyle}>
                 <Table id="table" striped bordered hover responsive="lg" size={props.size !== undefined ? props.size : "lg"}>
                     <thead>
                     <tr>
-                        {renderTableHeader()}
+                        {renderTableHeader(props.header)}
                     </tr>
                     </thead>
 
